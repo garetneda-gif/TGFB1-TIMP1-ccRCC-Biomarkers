@@ -394,3 +394,136 @@ if validation_failed:
 - [ ] 大表格已按步骤3.4处理（压缩或续表）
 - [ ] 所有续表包含" (Continued)"标题和重复表头
 - [ ] 已输出分页摘要表（含填充率和风险标注）
+
+## Playwright 自动布局验证
+
+此部分描述了使用 Playwright MCP 进行自动化布局验证的完整工作流。
+
+### 1. 前置条件
+
+在运行自动化验证脚本之前，请确保满足以下条件：
+
+1.  **启动本地 HTTP 服务器**：由于 Playwright MCP 不支持 `file://` 协议，需在 HTML 文件所在目录启动临时服务器。
+    ```bash
+    python3 -m http.server 8080
+    ```
+2.  **文件结构**：
+    - 输出目录应包含生成的 HTML 文件（例如 `output/article.html`）。
+    - 确保 CSS 和图片资源路径正确，可以通过 HTTP 访问。
+
+### 2. 视口设置
+
+为了模拟 A4 纸张（210mm x 297mm）在 96 DPI 下的渲染效果，浏览器视口必须严格设置为：
+
+-   **宽度**: 794px
+-   **高度**: 1123px
+-   **设备缩放因子**: 1.0
+
+### 3. 完整测量 JavaScript
+
+使用以下 JavaScript 代码在 Playwright 的 `browser_evaluate` 中执行，以精确测量每个页面的内容高度和溢出情况。此脚本会临时修改 DOM 样式进行测量，然后恢复原状。
+
+```javascript
+(() => {
+    const results = [];
+    const pages = document.querySelectorAll('.page-content');
+    
+    // 常量定义: 252mm = 952px (96 DPI)
+    const MAX_CONTENT_HEIGHT_PX = 952;
+
+    pages.forEach((page, index) => {
+        // 1. 记录原始容器高度
+        const originalRect = page.getBoundingClientRect();
+        const containerHeight = originalRect.height;
+        
+        // 2. 临时修改样式以测量实际内容高度
+        // 使用 !important 覆盖 CSS 列高度限制，使内容自然展开
+        page.style.setProperty('height', 'auto', 'important');
+        page.style.setProperty('overflow', 'visible', 'important');
+        
+        // 3. 测量实际内容高度
+        const actualRect = page.getBoundingClientRect();
+        const actualHeight = actualRect.height;
+        
+        // 4. 恢复原始样式
+        page.style.removeProperty('height');
+        page.style.removeProperty('overflow');
+        
+        // 5. 计算溢出和留白
+        const overflowPx = Math.max(0, actualHeight - MAX_CONTENT_HEIGHT_PX);
+        const whitespacePx = Math.max(0, MAX_CONTENT_HEIGHT_PX - actualHeight);
+        
+        results.push({
+            page: index + 1,
+            containerHeight: Math.round(containerHeight),
+            actualHeight: Math.round(actualHeight),
+            overflow: overflowPx > 0,
+            overflowPx: Math.round(overflowPx),
+            whitespacePx: Math.round(whitespacePx)
+        });
+    });
+    
+    return results;
+})()
+```
+
+### 4. 阈值判定逻辑
+
+基于 96 DPI (1mm ≈ 3.78px) 的换算标准，定义以下判定规则：
+
+-   **基准高度**: `MAX_CONTENT_HEIGHT_PX = 952px` (252mm)
+-   **警告阈值**: `WHITESPACE_WARNING_MM = 30mm` (≈ 113px)
+-   **失败阈值**: `WHITESPACE_FAILURE_MM = 50mm` (≈ 189px)
+
+**判定规则：**
+
+1.  **❌ 失败 (FAILURE)**:
+    -   内容溢出 (`overflowPx > 0`)
+    -   留白过大 (`whitespacePx > 189px`)
+2.  **⚠️ 警告 (WARNING)**:
+    -   留白处于警告区间 (`113px ≤ whitespacePx ≤ 189px`)
+3.  **✅ 通过 (PASS)**:
+    -   无溢出且留白在正常范围内 (`whitespacePx < 113px`)
+
+### 5. 截图策略
+
+为了辅助调试，仅在检测到异常时进行截图：
+
+-   **触发条件**: 页面状态为 `FAILURE` 或 `WARNING`（即 `overflowPx > 0` 或 `whitespacePx ≥ 113px`）。
+-   **截图范围**: 截取整个视口（包含页眉页脚）。
+-   **命名规范**: `screenshots/page-{页码}-{状态}.png` (例如: `page-3-overflow.png`)
+
+### 6. 结构化报告模板
+
+自动化脚本应输出如下 JSON 格式的验证报告，便于 CI/CD 集成：
+
+```json
+{
+  "summary": {
+    "total_pages": 5,
+    "status": "FAILURE",
+    "issues_count": 2
+  },
+  "pages": [
+    {
+      "page": 1,
+      "status": "PASS",
+      "details": "Whitespace: 504px (Cover page ignored)"
+    },
+    {
+      "page": 2,
+      "status": "PASS",
+      "details": "Whitespace: 91px"
+    },
+    {
+      "page": 3,
+      "status": "FAILURE",
+      "details": "Overflow: 224px",
+      "screenshot": "screenshots/page-3-overflow.png"
+    }
+  ],
+  "action_items": [
+    "第3页内容溢出，建议将最后一段移至第4页或调整图片大小。"
+  ]
+}
+```
