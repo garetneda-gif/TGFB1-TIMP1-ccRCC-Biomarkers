@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuscript Layout</title>
+    <style>
+        /* ========================================
+           单栏模板样式 - MedBA Medicine期刊标准格式
+           ======================================== */
+        
+        /* ============ URL链接换行处理 ============ */
+        /* 确保长URL在窄栏中能够正确换行 */
+        a {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        /* ============ 打印/PDF页面设置 ============ */
+        /* 标准A4纸张大小配置 */
+        @page {
+            size: A4;
+            /* A4页面标准边距 */
+            margin: 20mm;
+        }
+
+        /* ============ 打印模式样式 ============ */
+        @media print {
+            /* 页面背景和间距 */
+            body {
+                background: #e8e9ea !important;
+                margin: 0 !important;
+                padding: 24px 0 !important;
+                /* 确保打印时保留背景色 */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* 主页面容器 - 保持网页预览样式 */
+            #page {
+                max-width: 210mm !important;
+                margin: 0 auto !important;
+                padding: 26mm 20mm !important;
+                background: #fff !important;
+                /* 卡片阴影效果 */
+                box-shadow: 0 14px 50px rgba(0,0,0,0.12) !important;
+            }
+
+            /* 页眉页脚位置固定 */
+            #running-header,
+            #running-footer {
+                left: 0 !important;
+                right: 0 !important;
+                padding: 0 20mm !important;
+            }
+
+            /* 页眉顶部距离 */
+            #running-header {
+                top: 8mm !important;
+            }
+
+            /* 页脚底部距离 */
+            #running-footer {
+                bottom: 8mm !important;
+            }
+
+            /* 首页不显示页脚 */
+            #running-footer {
+                display: none !important;
+            }
+
+            /* 正文从新页面开始 */
+            #main-content {
+                break-before: page;
+                page-break-before: always;
+            }
+
+            /* 首页封面高度设置 */
+            #cover {
+                position: relative;
+                /* A4内容区域高度 = 297mm - 20mm(上边距) - 20mm(下边距) */
+                min-height: 257mm;
+                padding-bottom: 12mm;
+                box-sizing: border-box;
+            }
+
+            /* 首页页脚居中显示 */
+            #first-page-footer {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                text-align: center;
+                font-size: 9pt;
+            }
+
+            /* 栏目填充方式 */
+            #main-content {
+                column-fill: auto;
+            }
+
+            /* 避免标题单独成页 */
+            h1,
+            h2 {
+                break-after: avoid;
+                page-break-after: avoid;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            /* 保持前置信息和摘要完整 */
+            #front-matter,
+            #abstract-box {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            /* 段落孤行控制 */
+            p {
+                orphans: 3;  /* 页底最少保留3行 */
+                widows: 3;   /* 页顶最少保留3行 */
+            }
+        }
+    </style>
+
+</head>
+<body style="margin:0;background:#e8e9ea;font-family:'Times New Roman',Times,serif;font-size:10pt;line-height:1.38;color:#000;">
+<!-- ========================================
+     主页面容器
+     ======================================== -->
+<div id="page" style="max-width:210mm;margin:24px auto;padding:26mm 20mm;background:#fff;box-shadow:0 14px 50px rgba(0,0,0,0.12);">
+<div id="cover">
+<!-- ============ 首页页眉 ============ -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:7pt;border-bottom:0.5pt solid #000;padding-bottom:1mm;margin-bottom:2mm;">
+        <div style="flex:1;">{{RECEIVED_DATE}} <span style="margin-left:2em;">DOI: {{DOI}}</span></div>
+        <div style="font-weight:bold;">MedBA Medicine</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;">
+        <div style="font-size:10pt;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;margin-top:2mm;color:#000;">ORIGINAL ARTICLE</div>
+        <img src="https://medbam.org/assets/logo.png" alt="MedBA Logo" style="height:38px;width:auto;display:block;">
+    </div>
+
+    <!-- ============ 标题和作者 ============ -->
+    <!-- 文章标题 -->
+    <div id="article-title" style="font-size:18pt;font-weight:bold;margin-bottom:8mm;line-height:1.2;text-align:left;">
+        {{ARTICLE_TITLE}}
+    </div>
+
+    <!-- 作者列表（带上标编号） -->
+    <div id="article-authors" style="font-size:11pt;margin-bottom:10mm;font-weight:normal;text-align:left;">
+        {{AUTHOR_LIST}}
+    </div>
+
+    <!-- ============ 前置信息区域 ============ -->
+    <div id="front-matter" style="display:block;margin-bottom:8mm;">
+        <!-- 左侧：机构信息、通讯作者、贡献声明、基金资助 -->
+        <div style="width:100%;font-size:8pt;line-height:1.3;padding-right:0;margin-bottom:6mm;">
+            <!-- 作者单位 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                <span style="vertical-align:super;font-size:0.7em;line-height:0;">1</span>Obstetrics and Gynecology, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                <span style="vertical-align:super;font-size:0.7em;line-height:0;">2</span>Medical Reproductive Center, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                <span style="vertical-align:super;font-size:0.7em;line-height:0;">3</span>Pharmaceutical Department, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                <span style="vertical-align:super;font-size:0.7em;line-height:0;">4</span>Department of Oncology, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.
+            </p>
+            
+            <!-- 通讯作者信息 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                <span style="font-weight:bold;display:block;margin-bottom:1mm;">Correspondence</span>
+                Yihe Zhao, Obstetrics and Gynecology, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                Email: zhaoerhu999@163.com
+            </p>
+            
+            <!-- 共同第一作者声明 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                Yang Xiang and Yan Wang contributed to the work equally and should be regarded as co-first authors.
+            </p>
+            
+            <!-- 基金资助信息 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                <span style="font-weight:bold;display:block;margin-bottom:1mm;">Funding information</span>
+                This work was supported by the Jiuquan City Talent Cultivation Plan Project (Grant No. 2024MB1035)
+            </p>
+        </div>
+
+        <!-- ============ 摘要盒子 ============ -->
+        <div id="abstract-box" style="width:100%;border:1pt solid #b8b8b8;border-left:3pt solid #005a8c;padding:6mm 7mm;position:relative;box-sizing:border-box;overflow-wrap:break-word;word-wrap:break-word;box-shadow:0 0 15px rgba(0,0,0,0.15);background-color:#f8f9fa;">
+            <!-- 左上角装饰 -->
+            <div style="position:absolute;top:2mm;left:2mm;width:6mm;height:6mm;border-top:1pt solid #005a8c;border-left:1pt solid #005a8c;"></div>
+            
+            <!-- 摘要标题 */
+            <div style="font-size:10pt;font-weight:bold;font-variant:small-caps;letter-spacing:0.05em;margin-bottom:3mm;color:#005a8c;">Abstract</div>
+            
+            <!-- 摘要正文（按段落分节） -->
+            <div style="font-size:9pt;line-height:1.3;">
+                {{ABSTRACT_CONTENT}}
+                
+                <!-- 关键词 -->
+                <div style="margin-top:2mm;">
+                    <span style="font-weight:bold;">Keywords:</span> {{KEYWORDS}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 首页页脚占位 -->
+    <div id="first-page-footer"></div>
+</div>
+
+
+
+<!-- ============ 运行页脚（从第二页开始） ============ -->
+<div id="running-footer" style="position:fixed;bottom:12mm;left:0;right:0;padding:0 20mm;font-family:'Times New Roman',Times,serif;font-size:9pt;color:#000;display:flex;justify-content:space-between;pointer-events:none;z-index:10;border-top:0.5pt solid #ccc;padding-top:2mm;"></div>
+
+    <!-- ============ 正文内容区域 ============ -->
+    <div id="main-content" style="text-align:justify;">
+        {{MAIN_CONTENT}}
+        
+        {{REFERENCES}}
+    </div>
+</div>
+</body>
+</html>

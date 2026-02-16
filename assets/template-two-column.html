@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuscript Layout</title>
+    <style>
+        /* ========================================
+           双栏模板样式 - MedBA Medicine期刊标准格式
+           ======================================== */
+        
+        /* ============ CSS变量定义 ============ */
+        /* 页面尺寸和边距的标准化配置 */
+        :root {
+            --page-width: 210mm;           /* A4纸宽度 */
+            --page-height: 297mm;          /* A4纸高度 */
+            --margin-top: 25mm;            /* 页面上边距 */
+            --margin-bottom: 20mm;         /* 页面下边距 */
+            --margin-left: 20mm;           /* 页面左边距 */
+            --margin-right: 20mm;          /* 页面右边距 */
+            /* 内容区域宽度计算 */
+            --content-width: calc(var(--page-width) - var(--margin-left) - var(--margin-right));
+            /* 内容区域高度计算 */
+            --content-height: calc(var(--page-height) - var(--margin-top) - var(--margin-bottom));
+            --column-gap: 7.48mm;          /* 双栏之间的间距 */
+        }
+
+        /* ============ 全局盒模型 ============ */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* ============ 页面主体样式 ============ */
+        body {
+            margin: 0;
+            padding: 20px 0;
+            background: #525659;           /* 页面外围灰色背景 */
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 9pt;
+            line-height: 1.35;
+            color: #000;
+        }
+
+        /* ============ 链接样式 ============ */
+        a {
+            overflow-wrap: anywhere;       /* 长URL自动换行 */
+            word-break: break-word;
+            color: #005a8c;                /* 期刊主题蓝色 */
+            text-decoration: none;
+        }
+
+        /* ============ 页面容器 ============ */
+        /* 每一页的白色卡片容器 */
+        .page {
+            width: var(--page-width);
+            height: var(--page-height);
+            margin: 0 auto 20px;           /* 页面之间20px间距 */
+            padding: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
+            background: #fff;              /* 白色纸张背景 */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============ 页眉样式 ============ */
+        .page-header {
+            position: absolute;
+            top: 10mm;
+            left: var(--margin-left);
+            right: var(--margin-right);
+            font-size: 8pt;
+            text-transform: uppercase;     /* 页眉文字大写 */
+            text-align: right;
+            color: #000;
+            border-bottom: 0.5pt solid #ccc;
+            padding-bottom: 2mm;
+        }
+
+        /* ============ 页脚样式 ============ */
+        .page-footer {
+            position: absolute;
+            bottom: 8mm;
+            left: var(--margin-left);
+            right: var(--margin-right);
+            font-size: 9pt;
+            text-align: center;
+            color: #000;
+            border-top: 0.5pt solid #000;
+            padding-top: 2mm;
+        }
+        .page-footer .page-num {
+            position: absolute;
+            right: 0;
+            top: 2mm;
+        }
+
+        /* ============ 页面内容区域 ============ */
+        .page-content {
+            height: var(--content-height);
+            overflow: hidden;
+        }
+
+        /* ============ 双栏布局 ============ */
+        .two-column {
+            column-count: 2;               /* 两栏布局 */
+            column-gap: var(--column-gap);
+            text-align: justify;           /* 两端对齐 */
+        }
+
+        /* ============ 跨栏元素 ============ */
+        /* 用于标题、图片、表格等需要跨越两栏的元素 */
+        .column-span-all {
+            column-span: all;
+        }
+
+        /* ============ 一级标题样式 ============ */
+        h1.section-title {
+            column-span: all;              /* 标题跨越两栏 */
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;     /* 大写 */
+            text-align: left;
+            margin: 6mm 0 3mm 0;
+        }
+
+        /* 第一个标题顶部无边距 */
+        h1.section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* ============ 二级标题样式 ============ */
+        h2.subsection-title {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9.5pt;
+            font-weight: bold;
+            text-align: left;
+            margin: 3mm 0 2mm 0;
+        }
+
+        /* ============ 段落样式 ============ */
+        p {
+            margin: 0 0 2mm 0;
+            text-indent: 1em;              /* 段落首行缩进 */
+        }
+
+        /* 无缩进段落 */
+        p.no-indent {
+            text-indent: 0;
+        }
+
+        /* ============ 图片样式 ============ */
+        figure {
+            column-span: all;              /* 图片跨越两栏 */
+            margin: 5mm 0;
+            width: 100%;
+        }
+
+        figure img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* 图片标题 */
+        figcaption {
+            font-size: 8.5pt;
+            margin-top: 2mm;
+            text-align: left;
+            line-height: 1.3;
+            color: #222;
+        }
+
+        /* 图号标签样式 */
+        figcaption .fig-label {
+            font-weight: bold;
+            color: #005a8c;
+        }
+
+        /* ============ 表格容器 ============ */
+        .table-wrapper {
+            column-span: all;              /* 表格跨越两栏 */
+            margin: 5mm 0 6mm;
+            width: 100%;
+        }
+
+        /* 表格标题 */
+        .table-caption {
+            font-size: 8.5pt;
+            margin-bottom: 2mm;
+            text-align: left;
+            color: #222;
+        }
+
+        /* 表号标签样式 */
+        .table-caption .tbl-label {
+            font-weight: bold;
+            color: #005a8c;
+        }
+
+        /* ============ 表格样式 ============ */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.5pt;
+            line-height: 1.3;
+            border-top: 1.5pt solid #000;
+            border-bottom: 1.5pt solid #000;
+        }
+
+        /* 表头单元格 */
+        th {
+            border-bottom: 0.5pt solid #000;
+            font-weight: bold;
+            text-align: left;
+            padding: 1.5mm 2mm;
+            vertical-align: bottom;
+        }
+
+        /* 表格单元格 */
+        td {
+            padding: 1mm 2mm;
+            vertical-align: top;
+        }
+
+        /* ============ 参考文献样式 ============ */
+        .references {
+            font-size: 8pt;
+            line-height: 1.3;
+        }
+
+        .references div {
+            margin-bottom: 2mm;
+            padding-left: 1.5em;           /* 悬挂缩进 */
+            text-indent: -1.5em;
+        }
+
+        /* ============ 并排图片容器 ============ */
+        .side-by-side-figures {
+            column-span: all;
+            display: flex;
+            gap: 4mm;                      /* 图片之间的间距 */
+            margin: 5mm 0;
+        }
+
+        .side-by-side-figures figure {
+            flex: 1;                       /* 图片等宽分布 */
+            margin: 0;
+            min-width: 0;
+        }
+
+        /* ============ 打印模式样式 ============ */
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+                background: #fff;
+            }
+
+            .page {
+                width: var(--page-width);
+                height: var(--page-height);
+                margin: 0;
+                padding: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
+                box-shadow: none;
+                page-break-after: always;   /* 每页后强制分页 */
+                page-break-inside: avoid;   /* 避免页内分页 */
+            }
+
+            /* 最后一页不分页 */
+            .page:last-child {
+                page-break-after: auto;
+            }
+
+            /* 页眉页脚绝对定位 */
+            .page-header, .page-footer {
+                position: absolute;
+            }
+        }
+
+        /* ============ 打印页面设置 ============ */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    </style>
+
+</head>
+<body>
+<!-- ========================================
+     第一页：封面页
+     ======================================== -->
+<div class="page">
+    <div class="page-content">
+        <div id="cover">
+            <!-- ============ 首页页眉 ============ -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:7pt;border-bottom:0.5pt solid #000;padding-bottom:1mm;margin-bottom:2mm;">
+                <div style="flex:1;">{{RECEIVED_DATE}} <span style="margin-left:2em;">DOI: {{DOI}}</span></div>
+                <div style="font-weight:bold;">MedBA Medicine</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;">
+                <div style="font-size:10pt;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;margin-top:2mm;color:#005a8c;">ORIGINAL ARTICLE</div>
+                <img src="https://medbam.org/assets/logo.png" alt="MedBA Logo" style="height:38px;width:auto;display:block;">
+            </div>
+
+            <!-- ============ 标题和作者 ============ -->
+            <!-- 文章标题占位符 -->
+            <div id="article-title" style="font-size:18pt;font-weight:bold;margin-bottom:8mm;line-height:1.2;text-align:left;">
+                {{ARTICLE_TITLE}}
+            </div>
+
+            <!-- 作者列表占位符（带上标编号，示例：Author One<sup>1</sup>, Author Two<sup>2</sup>） -->
+            <div id="article-authors" style="font-size:11pt;margin-bottom:10mm;font-weight:normal;text-align:left;">
+                {{AUTHOR_LIST}}
+            </div>
+
+            <!-- ============ 前置信息区域（双栏布局） ============ -->
+            <div id="front-matter" style="display:flex;margin-bottom:8mm;align-items:stretch;">
+                <!-- 左栏：机构信息、通讯作者、贡献声明、基金资助（30%宽度） -->
+                <div style="width:30%;font-size:8pt;line-height:1.3;padding:4mm 4mm 4mm 0;border-right:2px solid #005a8c;">
+                    <!-- 作者单位 -->
+                    <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                        <span style="vertical-align:super;font-size:0.7em;line-height:0;">1</span>Medical Reproductive Center, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                        <span style="vertical-align:super;font-size:0.7em;line-height:0;">2</span>Obstetrics and Gynecology, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                        <span style="vertical-align:super;font-size:0.7em;line-height:0;">3</span>Pharmaceutical Department, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                        <span style="vertical-align:super;font-size:0.7em;line-height:0;">4</span>Department of Oncology, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.
+                    </p>
+                    
+                    <!-- 通讯作者信息 -->
+                    <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                        <span style="font-weight:bold;display:block;margin-bottom:1mm;">Correspondence</span>
+                        Yihe Zhao, Obstetrics and Gynecology, Jiuquan Hospital, Shanghai General Hospital, Jiuquan City, Gansu, China.<br>
+                        Email: zhaoerhu999@163.com
+                    </p>
+                    
+                    <!-- 共同第一作者声明 -->
+                    <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                        Yan Wang and Yang Xiang contributed to the work equally and should be regarded as co-first authors.
+                    </p>
+                    
+                    <!-- 基金资助信息 -->
+                    <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                        <span style="font-weight:bold;display:block;margin-bottom:1mm;">Funding information</span>
+                        This work was supported by the Jiuquan City Talent Cultivation Plan Project (Grant No. 2024MB1035)
+                    </p>
+                </div>
+
+                <!-- 右栏：摘要盒子（70%宽度） -->
+                <div id="abstract-box" style="width:70%;padding:4mm 0 4mm 4mm;position:relative;background-color:#f8f9fa;">
+                    
+                    <!-- 摘要标题 -->
+                    <div style="font-size:10pt;font-weight:bold;font-variant:small-caps;letter-spacing:0.05em;margin-bottom:3mm;color:#000;">Abstract</div>
+                    
+                    <!-- 摘要正文（按段落分节） -->
+                    <div id="abstract-body" style="font-size:9pt;line-height:1.3;">
+                        <p style="margin:0 0 3mm 0;text-indent:0;text-align:justify;"><span style="font-weight:bold;">Background:</span> Ferroptosis is a newly discovered form of cell death in recent years, mainly due to the accumulation of reactive oxygen species, a metabolite of intracellular lipid. This study mainly focused on the finding of the ferroptosis-related genes associated with cervical cancer.</p>
+                        <p style="margin:0 0 3mm 0;text-indent:0;text-align:justify;"><span style="font-weight:bold;">Materials and Methods:</span> The transcriptome sequencing data of cervical cancer patients in the Cancer Genome Atlas (TCGA) database and the ferroptosis driver factors in FerrDb were firstly downloaded. Then using univariate Cox, multi-Cox, and Lasso regression analysis to find prognostic ferroptosis-related genes. Subsequently, the ROC curve, survival analysis, PCA, T-SNE, and risk curve were further constructed to verify the accuracy of the model. Finally, GO and KEGG analysis was used to identify the gene ontology and signaling pathways involved in ferroptosis driver factors genes.</p>
+                        <p style="margin:0 0 3mm 0;text-indent:0;text-align:justify;"><span style="font-weight:bold;">Results:</span> By using univariate Cox, LASSO, and multivariate Cox proportional risk regression analysis, we constructed a prognosis risk model: Risk score = E<sub>TFRC</sub> × 0.008151625 + E<sub>ALOX12B</sub> × (-0.091561269) + E<sub>ATG3</sub> × (-0.065389691) + E<sub>ATG4D</sub> × (-0.074492225) + E<sub>WIPI2</sub> × 0.088486467 + E<sub>IFNG</sub> × (-0.174707719) + E<sub>TNFAIP3</sub> × 0.024081289 + E<sub>EGLN2</sub> × (-0.15986193). The prognosis model showed that the prognosis of patients in the high-risk group was poor (P=2.568e-05). Besides the ROC curve, the area under the curve (AUC) reached 0.756 in one year, 0.756 in three years, 0.766 in five years, and 0.698 in ten years. GO analyses show that these genes are mainly enriched in the biological processes related to apoptosis and autophagy. KEGG results show that these genes are enriched in hsa04066: HIF-1 signaling pathway (P=0.003), and hsa04140: Regulation of autophagy (P=0.022). Among these 8 ferroptosis-related gene signatures, only ATG4D and ATG3 have no gene expression change in TCGA.</p>
+                        <p style="margin:0 0 3mm 0;text-indent:0;text-align:justify;"><span style="font-weight:bold;">Conclusion:</span> In conclusion, this study provides a prognostic risk model based on ferroptosis-related genes, offering a valuable tool for predicting the prognosis of cervical cancer patients. The identified genes and their associated pathways may serve as potential therapeutic targets for improving the treatment outcomes of cervical cancer.</p>
+                        
+                        <!-- 关键词 -->
+                        <div style="margin-top:2mm;">
+                            <span style="font-weight:bold;">Keywords:</span> Cervical cancer; Gene signature; Prognostic; TCGA; Ferroptosis; Overall survival
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 首页页脚 -->
+    <div class="page-footer">https://medbam.org<span class="page-num">{{PAGE_NUM}}</span></div>
+</div>
+
+<!-- ========================================
+     第二页及后续页：正文内容（双栏布局）
+     ======================================== -->
+<div class="page">
+    <!-- 页眉 -->
+    <div class="page-header">WANG ET AL.</div>
+    
+    <!-- 双栏正文内容 -->
+    <div class="page-content two-column">
+        <!-- ============ 一级标题（跨栏） ============ -->
+        <h1 class="section-title">1 INTRODUCTION</h1>
+        
+        <!-- ============ 正文段落 ============ -->
+        <p>Cervical cancer is the third most common cancer in the female reproductive system, with about 529,000 new cases by 2008. Over 85 % of the global burden of cervical cancer occurs in developing countries, accounting for 13 % of all female cancers [1]. The main risk factors of cervical cancer are HPV infection, unclean life history, etc [2]. The main clinical treatments for cervical cancer are surgery, radiotherapy and chemotherapy, etc [3]. However, the current clinical treatment methods still have shortcomings. In recent years, the prognosis of patients has only slightly improved, and the effect is not obvious. Meanwhile, the rates of recurrence and metastasis are still high. Therefore, new diagnosis and treatment methods need to be developed. We hope that these novel biomarkers will contribute to the diagnosis, treatment and prognosis of cervical cancer.</p>
+        
+        <p>Ferroptosis is a recently discovered form of cell death, which is regulated by multiple pathways, such as metabolic pathways [4-5]. What's more, it was found to be associated with more and more diseases. The mechanism of ferroptosis control elucidated in the first few years after ferroptosis was discovered mainly revolves around cysteine and glutathione metabolism, and the ability of phospholipid peroxidase GPX4 to prevent lipid peroxide accumulation [6]. Recent studies have found that the treatment of cancer patients may trigger the cell iron death pathway, especially in the treatment of malignant tumors resistant to traditional treatment [7]. Studies have shown that ferroptosis is associated with breast cancer. Ciramexin and lapatinib, as therapeutic drugs for breast cancer, induce changes in intracellular reactive oxygen species and promote iron death in breast cancer cells. The levels of FeCl3 in breast cancer cells treated with siramesine and lapatinib increased, indicating that iron-dependent cells died [8]. It has also been reported that ferroptosis is related to cervical cancer, and oleanolic acid inhibits the proliferation of cervical cancer Hela cells by regulating ACSL4 [9]. Therefore, the study of ferroptosis biomarkers is of great significance to the prognosis and treatment of cervical cancer patients.</p>
+
+        <!-- ============ 二级标题 ============ -->
+        <h1 class="section-title">2 MATERIALS AND METHODS</h1>
+        
+        <!-- ============ 三级标题 ============ -->
+        <h2 class="subsection-title">2.1 TCGA-CESC cohort</h2>
+        
+        <p>We download cervical cancer transcriptome data (HTSeq-FPKM) and clinical data (XML) from the TCGA database (https://portal.gdc.cancer.gov/), which included 3 normal subjects and 306 patients with cervical cancer. The original data were processed by Perl [13] and R languages [14], which obtained the processed gene expression matrix. The samples with incomplete survival time and survival status were discarded, and the remaining samples were included in our study. FerrDb (http://www.zhounan.org/ferrdb/) is the first human ferroptosis database [15]. We downloaded ferroptosis-driven genes from FerrDb database. Finally, we took the intersection of the related genes of cervical cancer patients in the TCGA database of the ferroptosis driver gene in FerrDb database, and finally obtained the ferroptosis-related driver genes of cervical cancer patients.</p>
+
+        <!-- ============ 并排图片示例（跨栏） ============ -->
+        <div class="side-by-side-figures">
+            <figure id="fig-1">
+                <img src="https://medbam.org/assets/Figure 1.png" alt="Figure 1">
+                <figcaption><span class="fig-label">Figure 1.</span> The flowchart of the study.</figcaption>
+            </figure>
+            <figure id="fig-2">
+                <img src="https://medbam.org/assets/Figure 2.png" alt="Figure 2">
+                <figcaption><span class="fig-label">Figure 2.</span> Venny Plot.</figcaption>
+            </figure>
+        </div>
+
+        <!-- ============ 表格示例（跨栏） ============ -->
+        <div class="table-wrapper" id="tbl-1">
+            <!-- 表格标题 -->
+            <div class="table-caption"><span class="tbl-label">Table 1.</span> Patient clinical information statistics.</div>
+            <!-- 表格主体 -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Characteristic</th>
+                        <th>Counts</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 表格数据行 -->
+                    <tr><td colspan="2" style="font-weight:bold;padding-top:1.5mm;">Gender</td></tr>
+                    <tr><td>Male</td><td>0 (0%)</td></tr>
+                    <tr><td>Female</td><td>294 (100%)</td></tr>
+                    <tr><td colspan="2" style="font-weight:bold;padding-top:1.5mm;">Age</td></tr>
+                    <tr><td>&lt;65</td><td>258 (88%)</td></tr>
+                    <tr><td>&gt;=65</td><td>36 (12%)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 页脚（页码） -->
+    <div class="page-footer">https://medbam.org<span class="page-num">{{PAGE_NUM}}</span></div>
+</div>
+
+<!-- ========================================
+     参考文献页示例
+     ======================================== -->
+<div class="page">
+    <div class="page-header">WANG ET AL.</div>
+    <div class="page-content two-column">
+        <!-- ============ 参考文献标题 ============ -->
+        <h1 class="section-title">REFERENCES</h1>
+        
+        <!-- ============ 参考文献列表 ============ -->
+        <div class="references">
+            <div>[1] Ferlay J, Shin H R, Bray F, et al. Estimates of worldwide burden of cancer in 2008: GLOBOCAN 2008[J]. Int J Cancer, 2010,127(12):2893-917.</div>
+            <div>[2] Bhatla N, Singhal S. Primary HPV screening for cervical cancer[J]. Best Pract Res Clin Obstet Gynaecol, 2020,65:98-108.</div>
+            <div>[3] Ortiz-de la Tabla V, Gutierrez F. Cervicitis: Etiology, diagnosis and treatment[J]. Enferm Infecc Microbiol Clin (Engl Ed), 2019,37(10):661-67.</div>
+        </div>
+    </div>
+    <div class="page-footer">https://medbam.org<span class="page-num">{{PAGE_NUM}}</span></div>
+</div>
+
+</body>
+</html>
