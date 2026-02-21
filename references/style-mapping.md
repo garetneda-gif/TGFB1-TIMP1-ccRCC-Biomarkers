@@ -376,7 +376,7 @@ td {
 ```html
 <div id="front-matter" style="display:flex; margin-bottom:8mm; align-items:stretch;">
     <!-- 左栏：机构信息等 (30%) -->
-    <div style="width:30%; font-size:8pt; line-height:1.3; padding:4mm 4mm 4mm 0; border-right:2px solid #005a8c;">
+    <div style="width:30%; font-size:8pt; line-height:1.3; padding:4mm 4mm 4mm 0; border-right:2px solid #000;">
         <p>...</p>
     </div>
 

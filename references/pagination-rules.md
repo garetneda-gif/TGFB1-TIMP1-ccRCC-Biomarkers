@@ -28,15 +28,22 @@ def analyze_content(markdown_text):
     return sections
 
 # 2. 规划分页（考虑图表占用空间）
+# 注意：封面页不必独立成页，若封面/摘要区底部有剩余空间，应将正文接续填入
 page_plan = {
+    1: {  # 第1页：封面 + 正文流入
+        'content': 'cover + Introduction开头（填满剩余空间）',
+        'words': 200,  # Introduction开头约200词，视封面高度调整
+        'space_used': '封面固定高度 + 剩余空间填入正文',
+        'has_figures': False
+    },
     2: {  # 第2页
-        'content': 'INTRODUCTION前3段',
+        'content': 'INTRODUCTION续段 + METHODS 2.1开头',
         'words': 400,
         'space_used': '约180mm',  # 双栏，每栏约90mm
         'has_figures': False
     },
     3: {  # 第3页
-        'content': 'INTRODUCTION后2段 + METHODS 2.1',
+        'content': 'METHODS 2.1续 + 2.2开头 + Figures 1-2',
         'words': 350,
         'space_used': '约160mm',
         'has_figures': True,  # Figures 1-2并排占约60mm
@@ -45,9 +52,9 @@ page_plan = {
     # ... 继续规划每一页
 }
 
-# 3. 验证分页计划
+# 3. 验证分页计划（零留白容忍）
 def validate_page_plan(page_plan):
-    """验证每页内容不会溢出或留白"""
+    """验证每页内容不会溢出或留白（零留白原则：必须填满，不允许空白）"""
     MAX_HEIGHT = 252  # mm (297 - 25 - 20)
 
     for page_num, plan in page_plan.items():
@@ -57,8 +64,8 @@ def validate_page_plan(page_plan):
 
         if total > MAX_HEIGHT:
             raise ValueError(f"第{page_num}页内容溢出！ ({total}mm > {MAX_HEIGHT}mm)")
-        elif total < MAX_HEIGHT - 30:
-            print(f"⚠️ 第{page_num}页留白过多！ ({MAX_HEIGHT - total}mm空白)")
+        elif total < MAX_HEIGHT - 15:  # 阈值从30mm降低到15mm，更严格的零留白
+            print(f"⚠️ 第{page_num}页留白过多！ ({MAX_HEIGHT - total}mm空白，必须填入更多内容)")
 ```
 
 ---
@@ -136,8 +143,8 @@ sections = analyze_content(content)
 
 # 第二步：规划分页（根据字数和图表）
 page_plan = {
-    1: {'type': 'cover', 'content': 'title + abstract + metadata'},
-    2: {'type': 'text', 'section': 'INTRODUCTION', 'words': 550, 'paragraphs': [1,2,3,4]},
+    1: {'type': 'cover+text', 'content': 'title + abstract + metadata + Introduction开头段落（填满剩余空间）'},
+    2: {'type': 'text', 'section': 'INTRODUCTION续 + METHODS开头', 'words': 400, 'paragraphs': [2,3,4,5]},
     3: {'type': 'mixed', 'section': 'METHODS 2.1-2.2', 'words': 350, 'figures': [1,2]},
     # ... 继续规划
 }
@@ -346,11 +353,11 @@ validate_pagination('双栏分页-XXX.html')
    - 页面之间有20 px 灰色间距
 1. **逐页检查留白**
 
-   ```
-   ✅ 合格：页面底部空白 < 30mm
-   ⚠️ 警告：页面底部空白 30-50mm（可接受，但不理想）
-   ❌ 失败：页面底部空白 > 50mm（必须调整分页）
-   ```
+    ```
+    ✅ 合格：页面底部空白 < 15mm
+    ⚠️ 警告：页面底部空白 15-30mm（须压缩，拉入后续段落）
+    ❌ 失败：页面底部空白 > 30mm（必须调整分页，不允许留白）
+    ```
 2. **检查溢出**
 
    - 使用浏览器检查元素，查看 `.page-content` 高度
@@ -388,7 +395,7 @@ if validation_failed:
 - [ ] 文件大小合理（通常20-50 KB）
 - [ ] 包含所有页面（封面+正文+参考文献）
 - [ ] 每页字数在合理范围（见上述标准）
-- [ ] 无任何页面留白>50 mm
+- [ ] 无任何页面留白>30 mm（封面页除外：允许正文流入填满）
 - [ ] 无任何内容溢出页面边界
 - [ ] 在浏览器中打开显示正常
 - [ ] 大表格已按步骤3.4处理（压缩或续表）
@@ -472,24 +479,24 @@ if validation_failed:
 基于 96 DPI (1mm ≈ 3.78px) 的换算标准，定义以下判定规则：
 
 -   **基准高度**: `MAX_CONTENT_HEIGHT_PX = 952px` (252mm)
--   **警告阈值**: `WHITESPACE_WARNING_MM = 30mm` (≈ 113px)
--   **失败阈值**: `WHITESPACE_FAILURE_MM = 50mm` (≈ 189px)
+-   **警告阈值**: `WHITESPACE_WARNING_MM = 15mm` (≈ 57px)
+-   **失败阈值**: `WHITESPACE_FAILURE_MM = 30mm` (≈ 113px)
 
 **判定规则：**
 
 1.  **❌ 失败 (FAILURE)**:
     -   内容溢出 (`overflowPx > 0`)
-    -   留白过大 (`whitespacePx > 189px`)
+    -   留白过大 (`whitespacePx > 113px`)（零留白原则：≥30mm 即视为失败）
 2.  **⚠️ 警告 (WARNING)**:
-    -   留白处于警告区间 (`113px ≤ whitespacePx ≤ 189px`)
+    -   留白处于警告区间 (`57px ≤ whitespacePx ≤ 113px`)
 3.  **✅ 通过 (PASS)**:
-    -   无溢出且留白在正常范围内 (`whitespacePx < 113px`)
+    -   无溢出且留白在正常范围内 (`whitespacePx < 57px`)
 
 ### 5. 截图策略
 
 为了辅助调试，仅在检测到异常时进行截图：
 
--   **触发条件**: 页面状态为 `FAILURE` 或 `WARNING`（即 `overflowPx > 0` 或 `whitespacePx ≥ 113px`）。
+-   **触发条件**: 页面状态为 `FAILURE` 或 `WARNING`（即 `overflowPx > 0` 或 `whitespacePx ≥ 57px`）。
 -   **截图范围**: 截取整个视口（包含页眉页脚）。
 -   **命名规范**: `screenshots/page-{页码}-{状态}.png` (例如: `page-3-overflow.png`)
 
@@ -508,7 +515,7 @@ if validation_failed:
     {
       "page": 1,
       "status": "PASS",
-      "details": "Whitespace: 504px (Cover page ignored)"
+      "details": "Whitespace: 45px (Cover+text page, Introduction已流入填满)"
     },
     {
       "page": 2,

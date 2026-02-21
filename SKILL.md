@@ -393,10 +393,10 @@ question(questions=[{
 
 **分页规则:**
 
-- 封面页：固定结构（期刊信息、标题、作者、摘要）
-- 正文页：每页约800-1000字
+- 封面页：不必独立成页——若封面/摘要区域底部有剩余空间，应将正文（Introduction 等）接续填入，直至页面填满
+- 正文页：每页约800-1000字；允许孤行（orphan）和寡行（widow），但**绝不允许留白**
 - **禁止溢出**：内容绝不能超出页面边界
-- **禁止留白**：页底空白不超过30 mm
+- **零留白容忍**：页底不得有可见空白；若当前段落无法填满，必须继续拉入下一段或下一节内容
 - **表格溢出处理**：先压缩间距（参见步骤3.4 Phase 1），压缩不够再跨页分割（参见步骤3.4 Phase 2）
 
 #### 🤖 人机协同流程（降本增效）
@@ -411,11 +411,11 @@ question(questions=[{
 1. 生成初版 HTML。
 2. 检查分页摘要表。
 3. **【验证】布局检查（CP3）**
-   - **自动验证（推荐）**：AI 使用 Playwright MCP 按 `pagination-rules.md` 工作流自动测量溢出/留白，输出报告后自行修复
+   - **自动验证（推荐）**：AI 使用 Playwright MCP 按 `pagination-rules.md` （位于'references/pagination-rules.md ## Playwright 自动布局验证一节'）工作流自动测量溢出/留白，输出报告后自行修复
    - **人工验证（备用）**：用户在浏览器中逐页检查分页效果
    检查点：详见下方风险标注规则。
 
-**Phase 3: 人机协同修正**
+**Phase 3: 通过playwright-mcp截图每页并修正问题页面**
 1. 确认问题页面。
 2. **【问题识别】分页问题处理**
    - **自动化路径**：AI 读取 Playwright 验证报告，自动定位溢出/留白页面，调整 `<p class="column-break">` 位置
@@ -431,8 +431,8 @@ question(questions=[{
 📄 分页摘要：
 | 页码 | 内容 | 表格行数 | 预估填充率 | 风险 |
 |------|------|----------|-----------|------|
-| P1 | 封面 | - | 固定 | ✅ |
-| P2 | Introduction (550词) | - | 92% | ✅ |
+| P1 | 封面 + Introduction开头 | - | ~85% | ✅ |
+| P2 | Introduction续 + Methods开头 | - | 92% | ✅ |
 | P3 | Methods + Table 1 (4行) | 4 | 88% | ✅ |
 | P4 | Results 3.1 + Table 2 (25行) | 25 | 98% | ⚠️ 紧凑 |
 | P5 | Table 2续 + 3.2 + Table 3 (15行) | 15 | 90% | ✅ |
@@ -444,12 +444,12 @@ question(questions=[{
 **风险标注规则**：
 - 自动验证阈值（Playwright 报告）：
   - 溢出任意值 → 🔴 FAILURE（必须修复）
-  - 留白 ≥50mm (189px) → 🔴 FAILURE（必须压缩）
-  - 留白 30-50mm (113-189px) → 🟡 WARNING（建议压缩）
+  - 留白 ≥30mm (113px) → 🔴 FAILURE（必须压缩）
+  - 留白 15-30mm (57-113px) → 🟡 WARNING（建议压缩）
 - 人工验证经验值：
   - 溢出 >10mm：标注 🔴（必须修复）
   - 溢出 5-10mm：标注 🟡（建议修复）
-  - 留白 >50mm：标注 🟡（建议压缩）
+  - 留白 >30mm：标注 🟡（建议压缩）
 
 这让用户只需关注标⚠️和❌的页面，而非逐页复核。
 
@@ -481,20 +481,26 @@ question(questions=[{
 ```html
 <!-- ✅ 正确：每个<div class="page">独立，包含精确计算的内容 -->
 <body>
-    <!-- 第1页：封面 -->
+    <!-- 第1页：封面 + 正文流入（封面区底部有剩余空间时，Introduction 接续填入） -->
     <div class="page">
         <div class="page-content">
             <h1>Title</h1>
             <div class="abstract">...</div>
+            <!-- 封面摘要区结束后，若页面仍有空间，正文直接接续，不另起新页 -->
+            <div class="two-column" style="margin-top:25mm;">
+                <h1 class="section-title">1 INTRODUCTION</h1>
+                <p>第1段（首段，填满剩余空间）...</p>
+                <!-- 按实际剩余高度填入适量正文 -->
+            </div>
         </div>
     </div>
 
-    <!-- 第2页：INTRODUCTION（约550词） -->
+    <!-- 第2页：INTRODUCTION续（约550词） -->
     <div class="page">
         <div class="page-header">WANG ET AL.</div>
         <div class="page-content two-column">
-            <h1 class="section-title">1 INTRODUCTION</h1>
-            <p>第1段...</p>
+            <h1 class="section-title">1 INTRODUCTION (continued)</h1>
+            <p>第1段续...</p>
             <p>第2段...</p>
             <p>第3段...</p>
             <p>第4段...</p>
