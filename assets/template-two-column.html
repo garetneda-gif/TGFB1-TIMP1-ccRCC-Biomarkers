@@ -151,6 +151,11 @@
             text-indent: 0;
         }
 
+        /* 章节首段不缩进（每节第一段顶格） */
+        p.first-paragraph {
+            text-indent: 0;
+        }
+
         /* ============ 图片样式 ============ */
         figure {
             column-span: all;              /* 图片跨越两栏 */
@@ -180,10 +185,16 @@
         }
 
         /* ============ 表格容器 ============ */
+        /* 默认：表格跨越两栏（适用于>3列的宽表格） */
         .table-wrapper {
             column-span: all;              /* 表格跨越两栏 */
             margin: 5mm 0 6mm;
             width: 100%;
+        }
+
+        /* ≤3列窄表格：不跨栏，在单栏内显示 */
+        .table-wrapper.no-span {
+            column-span: none;
         }
 
         /* 表格标题 */
@@ -301,7 +312,7 @@
                 <div style="font-weight:bold;">MedBA Medicine</div>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;">
-                <div style="font-size:10pt;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;margin-top:2mm;color:#000;">ORIGINAL ARTICLE</div>
+                <div style="font-size:10pt;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;margin-top:2mm;color:#000;border-bottom:1.5pt solid #000;padding-bottom:1mm;display:inline-block;">ORIGINAL ARTICLE</div>
                 <img src="https://medbam.org/assets/logo.png" alt="MedBA Logo" style="height:38px;width:auto;display:block;">
             </div>
 
@@ -386,7 +397,7 @@
         <h1 class="section-title">1 INTRODUCTION</h1>
         
         <!-- ============ 正文段落 ============ -->
-        <p>Cervical cancer is the third most common cancer in the female reproductive system, with about 529,000 new cases by 2008. Over 85 % of the global burden of cervical cancer occurs in developing countries, accounting for 13 % of all female cancers [1]. The main risk factors of cervical cancer are HPV infection, unclean life history, etc [2]. The main clinical treatments for cervical cancer are surgery, radiotherapy and chemotherapy, etc [3]. However, the current clinical treatment methods still have shortcomings. In recent years, the prognosis of patients has only slightly improved, and the effect is not obvious. Meanwhile, the rates of recurrence and metastasis are still high. Therefore, new diagnosis and treatment methods need to be developed. We hope that these novel biomarkers will contribute to the diagnosis, treatment and prognosis of cervical cancer.</p>
+        <p class="first-paragraph">Cervical cancer is the third most common cancer in the female reproductive system, with about 529,000 new cases by 2008. Over 85 % of the global burden of cervical cancer occurs in developing countries, accounting for 13 % of all female cancers [1]. The main risk factors of cervical cancer are HPV infection, unclean life history, etc [2]. The main clinical treatments for cervical cancer are surgery, radiotherapy and chemotherapy, etc [3]. However, the current clinical treatment methods still have shortcomings. In recent years, the prognosis of patients has only slightly improved, and the effect is not obvious. Meanwhile, the rates of recurrence and metastasis are still high. Therefore, new diagnosis and treatment methods need to be developed. We hope that these novel biomarkers will contribute to the diagnosis, treatment and prognosis of cervical cancer.</p>
         
         <p>Ferroptosis is a recently discovered form of cell death, which is regulated by multiple pathways, such as metabolic pathways [4-5]. What's more, it was found to be associated with more and more diseases. The mechanism of ferroptosis control elucidated in the first few years after ferroptosis was discovered mainly revolves around cysteine and glutathione metabolism, and the ability of phospholipid peroxidase GPX4 to prevent lipid peroxide accumulation [6]. Recent studies have found that the treatment of cancer patients may trigger the cell iron death pathway, especially in the treatment of malignant tumors resistant to traditional treatment [7]. Studies have shown that ferroptosis is associated with breast cancer. Ciramexin and lapatinib, as therapeutic drugs for breast cancer, induce changes in intracellular reactive oxygen species and promote iron death in breast cancer cells. The levels of FeCl3 in breast cancer cells treated with siramesine and lapatinib increased, indicating that iron-dependent cells died [8]. It has also been reported that ferroptosis is related to cervical cancer, and oleanolic acid inhibits the proliferation of cervical cancer Hela cells by regulating ACSL4 [9]. Therefore, the study of ferroptosis biomarkers is of great significance to the prognosis and treatment of cervical cancer patients.</p>
 
@@ -396,7 +407,7 @@
         <!-- ============ 三级标题 ============ -->
         <h2 class="subsection-title">2.1 TCGA-CESC cohort</h2>
         
-        <p>Transcriptome and clinical records for TCGA-CESC were retrieved from the TCGA portal and preprocessed in Perl/R. Cases with incomplete survival metadata were excluded before downstream modeling. Ferroptosis driver genes were downloaded from FerrDb and intersected with TCGA-CESC expression profiles to build the analysis dataset used in this template example.</p>
+        <p class="first-paragraph">Transcriptome and clinical records for TCGA-CESC were retrieved from the TCGA portal and preprocessed in Perl/R. Cases with incomplete survival metadata were excluded before downstream modeling. Ferroptosis driver genes were downloaded from FerrDb and intersected with TCGA-CESC expression profiles to build the analysis dataset used in this template example.</p>
 
         <!-- ============ 并排图片示例（跨栏） ============ -->
         <div class="side-by-side-figures">
@@ -410,7 +421,8 @@
             </figure>
         </div>
 
-        <!-- ============ 跨栏长表（上页部分） ============ -->
+        <!-- ============ 跨栏长表（>3列，跨栏显示） ============ -->
+        <!-- ⚠️ 排版规则：>3列用 class="table-wrapper"（跨栏），≤3列用 class="table-wrapper no-span"（不跨栏） -->
         <div class="table-wrapper" id="tbl-1" style="margin-top:4mm;">
             <div class="table-caption"><span class="tbl-label">Table 1.</span> Long cross-column signal detection table layout example.</div>
             <table style="font-size:7.5pt;line-height:1.25;">

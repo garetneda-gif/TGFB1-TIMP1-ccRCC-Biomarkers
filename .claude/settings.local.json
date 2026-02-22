@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__pubmed__pubmed_search_articles",
+      "mcp__crossref__searchByTitle",
+      "Bash(env)"
+    ]
+  }
+}

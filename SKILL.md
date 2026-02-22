@@ -601,6 +601,49 @@ question(questions=[{
 
 > 详细内容分割策略（高度计算、文字估算、图表空间、分页点选择）参见 references/pagination-rules.md § 内容分割策略
 
+### 步骤3.4：正文排版细节规则（MANDATORY）
+
+#### 封面页 ORIGINAL ARTICLE 下划线
+- `ORIGINAL ARTICLE` 所在的 `<div>` 必须带有黑色下划线：
+  ```html
+  <div style="...;border-bottom:1.5pt solid #000;padding-bottom:1mm;display:inline-block;">ORIGINAL ARTICLE</div>
+  ```
+
+#### 段落缩进规则
+- **每章节（一级标题 h1.section-title）后的第一段：顶格（text-indent:0）**，使用 `class="first-paragraph"` 或 `text-indent:0` inline style
+- 同一章节内的第二段及以后各段：正常首行缩进（`text-indent:1em`）
+- **每子节（二级标题 h2.subsection-title）后的第一段同样顶格**
+
+```html
+<!-- ✅ 正确示例 -->
+<h1 class="section-title">1 INTRODUCTION</h1>
+<p class="first-paragraph">第一段顶格，无缩进...</p>
+<p>第二段正常缩进...</p>
+<p>第三段正常缩进...</p>
+
+<h2 class="subsection-title">2.1 Data Source</h2>
+<p class="first-paragraph">子节第一段顶格...</p>
+<p>子节第二段正常缩进...</p>
+```
+
+#### 表格跨栏规则（仅适用于双栏模板）
+> ⚠️ 此规则**仅适用于 `template-two-column.html`（双栏分页版）**，单栏模板无需处理表格跨栏。
+
+- **≤ 3 列的表格**：不跨栏，使用 `class="table-wrapper no-span"`（在单栏内显示）
+- **> 3 列的表格**：跨栏，使用 `class="table-wrapper"`（默认，column-span:all）
+
+```html
+<!-- ✅ ≤3列：不跨栏（双栏模板） -->
+<div class="table-wrapper no-span" id="tbl-1">
+  <table>...</table>   <!-- 3列或更少 -->
+</div>
+
+<!-- ✅ >3列：跨栏（双栏模板） -->
+<div class="table-wrapper" id="tbl-2">
+  <table>...</table>   <!-- 4列或更多 -->
+</div>
+```
+
 ---
 
 ## 第4步：生成单栏连续 HTML
