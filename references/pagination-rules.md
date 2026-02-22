@@ -494,11 +494,20 @@ if validation_failed:
 
 ### 5. 截图策略
 
-为了辅助调试，仅在检测到异常时进行截图：
+截图分两类触发条件，**均需执行**：
 
--   **触发条件**: 页面状态为 `FAILURE` 或 `WARNING`（即 `overflowPx > 0` 或 `whitespacePx ≥ 57px`）。
--   **截图范围**: 截取整个视口（包含页眉页脚）。
--   **命名规范**: `screenshots/page-{页码}-{状态}.png` (例如: `page-3-overflow.png`)
+**条件1：高度异常截图**（原有规则）
+-   **触发条件**: 页面状态为 `FAILURE` 或 `WARNING`（即 `overflowPx > 0` 或 `whitespacePx ≥ 57px`）
+-   **截图范围**: 截取整个视口（包含页眉页脚）
+-   **命名规范**: `screenshots/page-{页码}-{状态}.png`（例如: `page-3-overflow.png`）
+
+**条件2：跨页表格截图**（新增，不依赖高度结果）
+-   **触发条件**: 结构检查JS（§7）发现 `crossPageTables` 不为空时，无论高度是否 PASS
+-   **截图范围**: 跨页原表所在页 + 续表所在页，各截一张
+-   **命名规范**:
+    -   `screenshots/page-{页码}-table-cross.png`（原表页，如 `page-6-table-cross.png`）
+    -   `screenshots/page-{页码}-table-continued.png`（续表页，如 `page-7-table-continued.png`）
+-   **目的**: 即使高度全 PASS，也保留人眼确认跨页表格视觉连续性的截图证据（三线表线条、视觉无断开）
 
 ### 6. 结构化报告模板
 
@@ -529,8 +538,201 @@ if validation_failed:
       "screenshot": "screenshots/page-3-overflow.png"
     }
   ],
+  "structure_checks": {
+    "status": "PASS",
+    "cross_page_tables": [
+      {
+        "tableNumber": "Table 4.",
+        "sourcePage": 6,
+        "continuedPage": 7,
+        "hasContinuedCaption": true,
+        "captionMatch": true,
+        "hasThead": true,
+        "status": "PASS"
+      }
+    ],
+    "threeLineChecks": [],
+    "errors": [],
+    "warnings": []
+  },
   "action_items": [
-    "第3页内容溢出，建议将最后一段移至第4页或调整图片大小。"
+    "第3页内容溢出，建议将最后一段移至第4页或调整图片大小。",
+    "第7页 Table 4 续表缺少 (Continued) 标题，请添加: <div class=\"table-caption\"><span class=\"tbl-label\">Table 4.</span> (Continued)</div>"
   ]
 }
 ```
+
+### 7. 结构完整性检查
+
+在高度验证（§3）通过后，**必须额外执行**以下结构检查，验证跨页表格格式规范和三线表线条正确性。
+
+> 高度通过 ≠ 排版正确。三线表缺线、续表缺标题/表头等视觉问题不影响高度，但会被用户发现。
+
+```javascript
+(() => {
+    const pages = Array.from(document.querySelectorAll('.page'));
+    const errors = [];
+    const warnings = [];
+    const crossPageTables = [];
+    const threeLineChecks = [];
+
+    // ── 工具函数 ──────────────────────────────────────────
+    // 用 getComputedStyle 检测 border（而非 .style，避免 inline/继承差异）
+    function borderWidthPx(el, side) {
+        return parseFloat(getComputedStyle(el)['border' + side + 'Width']) || 0;
+    }
+    function isBorderNone(el, side) {
+        return borderWidthPx(el, side) < 0.1;
+    }
+    // 1.5pt ≈ 2px（96dpi），用区间匹配避免浮点误差
+    function isHeavyBorder(el, side) {
+        const w = borderWidthPx(el, side);
+        return w >= 1.9 && w <= 2.1;
+    }
+    // 从 .table-caption 文字提取 "Table N." 编号
+    function extractTableNumber(captionEl) {
+        if (!captionEl) return null;
+        const m = captionEl.textContent.match(/Table\s+(\d+)\./i);
+        return m ? 'Table ' + m[1] + '.' : null;
+    }
+
+    // ── 遍历每页 ──────────────────────────────────────────
+    pages.forEach((page, pageIdx) => {
+        const pageNum = pageIdx + 1;
+        const tables = Array.from(page.querySelectorAll('table'));
+
+        tables.forEach(table => {
+            const tableId = table.id || '(no id)';
+            const isSource = isBorderNone(table, 'Bottom');  // 跨页原表：无底线
+            const isContinued = isBorderNone(table, 'Top'); // 续表：无顶线
+
+            // ── 三线表检查（所有表格）────────────────────
+            const thead = table.querySelector('thead');
+            const firstTbodyTr = table.querySelector('tbody tr');
+
+            const hasTopBorder = isHeavyBorder(table, 'Top');
+            const hasBottomBorder = isHeavyBorder(table, 'Bottom');
+            const hasHeaderSep = thead
+                ? borderWidthPx(thead.querySelector('th, td'), 'Bottom') > 0
+                : false;
+            const hasSpuriousInner = firstTbodyTr
+                ? borderWidthPx(firstTbodyTr, 'Top') > 0.5
+                : false;
+
+            const check = {
+                page: pageNum,
+                tableId,
+                isCrossPageSource: isSource,
+                isContinued,
+                hasTopBorder,
+                hasBottomBorder,
+                hasHeaderSeparator: hasHeaderSep,
+                hasSpuriousInnerBorders: hasSpuriousInner,
+                status: 'PASS'
+            };
+
+            // 跨页原表：底线为none是合规的，豁免底线检查
+            if (!hasTopBorder) {
+                check.status = 'WARNING';
+                warnings.push('P' + pageNum + ' ' + tableId + ': 三线表缺顶线');
+            }
+            if (!hasBottomBorder && !isSource) {
+                // 非跨页原表才要求底线
+                check.status = 'WARNING';
+                warnings.push('P' + pageNum + ' ' + tableId + ': 三线表缺底线');
+            }
+            if (!hasHeaderSep && thead) {
+                check.status = 'WARNING';
+                warnings.push('P' + pageNum + ' ' + tableId + ': 表头缺分隔线（thead th border-bottom）');
+            }
+            if (hasSpuriousInner) {
+                check.status = 'WARNING';
+                warnings.push('P' + pageNum + ' ' + tableId + ': tbody内部行有多余border（非三线表格式）');
+            }
+            threeLineChecks.push(check);
+
+            // ── 跨页表格匹配检查 ─────────────────────────
+            if (isSource) {
+                // 找原表编号
+                const wrapper = table.closest('.table-wrapper, div');
+                const sourceCaption = wrapper
+                    ? wrapper.querySelector('.table-caption')
+                    : null;
+                const tableNumber = extractTableNumber(sourceCaption);
+
+                // 去下一个 .page 找续表
+                const nextPage = pages[pageIdx + 1];
+                const contResult = {
+                    tableNumber: tableNumber || '(unknown)',
+                    sourcePage: pageNum,
+                    continuedPage: pageNum + 1,
+                    hasContinuedCaption: false,
+                    captionMatch: false,
+                    hasThead: false,
+                    status: 'FAILURE'
+                };
+
+                if (nextPage) {
+                    // 续表：border-top:none 的 table
+                    const nextTables = Array.from(nextPage.querySelectorAll('table'));
+                    const contTable = nextTables.find(t => isBorderNone(t, 'Top'));
+
+                    if (contTable) {
+                        // 检查续表 caption
+                        const contWrapper = contTable.closest('.table-wrapper, div');
+                        const contCaption = contWrapper
+                            ? contWrapper.querySelector('.table-caption')
+                            : null;
+                        const contText = contCaption ? contCaption.textContent : '';
+
+                        contResult.hasContinuedCaption = contText.toLowerCase().includes('continued');
+                        contResult.captionMatch = tableNumber
+                            ? contText.includes(tableNumber)
+                            : false;
+                        contResult.hasThead = !!contTable.querySelector('thead');
+
+                        if (contResult.hasContinuedCaption && contResult.hasThead && contResult.captionMatch) {
+                            contResult.status = 'PASS';
+                        } else {
+                            if (!contResult.hasContinuedCaption)
+                                errors.push('P' + (pageNum+1) + ' 续表缺少 "(Continued)" 标题（规范：Table N. (Continued)）');
+                            if (!contResult.hasThead)
+                                errors.push('P' + (pageNum+1) + ' 续表缺少重复表头 <thead>');
+                            if (!contResult.captionMatch && tableNumber)
+                                errors.push('P' + (pageNum+1) + ' 续表 caption 编号与原表不匹配（原表：' + tableNumber + '）');
+                        }
+                    } else {
+                        errors.push('P' + pageNum + ' 发现跨页原表（border-bottom:none），但下一页未找到对应续表');
+                        contResult.status = 'FAILURE';
+                    }
+                }
+                crossPageTables.push(contResult);
+            }
+        });
+    });
+
+    return {
+        crossPageTables,
+        threeLineChecks,
+        errors,
+        warnings,
+        summary: {
+            status: errors.length > 0 ? 'FAILURE' : warnings.length > 0 ? 'WARNING' : 'PASS',
+            errorCount: errors.length,
+            warningCount: warnings.length,
+            crossPageTableCount: crossPageTables.length
+        }
+    };
+})()
+```
+
+**判定规则：**
+- `errors[]` 非空 → 结构检查 **FAILURE**（必须修复后才能交付）
+  - 续表缺 `(Continued)` 标题
+  - 续表缺 `<thead>`
+  - caption 编号不匹配
+  - 跨页原表找不到对应续表
+- `warnings[]` 非空 → 结构检查 **WARNING**（建议修复）
+  - 三线表缺线（顶/底/表头分隔线）
+  - tbody 内部行有多余 border
+- 均为空 → 结构检查 **PASS**
