@@ -163,6 +163,7 @@ validate_pagination(output_file)
 | **让内容跨页流动**   | 所有内容在一个 `.two-column` 容器中 | ❌ 禁止 `<br>` ✅ 每页独立的 `<div class="page">`      |
 | **未精确计算字数**   | 随意分配段落到页面                   | ❌ 禁止 `<br>` ✅ 使用 `analyze_content()` 计算每段字数 |
 | **图表位置随意**     | 图表与引用文字距离过远               | ❌ 禁止 `<br>` ✅ 图表放在引用段落之后的页面             |
+| **浮动行距填充留白** | 不同页的 `.page-content` 有不同的 `style="line-height:X.X;"` | ⚠️ 首选通过内容重排（移动段落/节）消除留白 `<br>` **仅当数学上确认全文内容总量不足时**，才允许按页覆盖行距（详见文末"逐页行距迭代调整法"一节） |
 
 ---
 
@@ -180,8 +181,8 @@ validate_pagination(output_file)
    - **可用内容高度：约230 mm**
 1. **估算文字高度**:
 
-   - 字体：9 pt，行高：1.35
-   - 每行高度：约4.3 mm
+   - 字体：9 pt，行高：1.4（body CSS 全局值，不得按页修改）
+   - 每行高度：约4.4 mm
    - 双栏，每栏约27 mm 宽
    - **每栏约53行，每页约106行**
    - 每行约10-12个英文单词
@@ -197,6 +198,94 @@ validate_pagination(output_file)
    - 优先在段落之间分页
    - 避免标题单独在页底
    - 图表尽量放在引用它的文字附近
+
+---
+
+## 蛇形双栏布局（Snake Layout）
+
+### 概述
+
+蛇形布局是相对于默认"标题跨栏"布局的替代方案：
+
+- 读者视线从第1页左栏顶部，蛇形（左→右→左→右）流过全文
+- 章节标题（`h1.section-title`）不跨栏，随正文流自然进入下一栏
+- 内容连续流动，无视觉分隔，阅读连贯性强
+
+**触发条件**：用户要求"内容连续流动、不按章节截断"或"蛇形布局"时使用。
+
+### CSS 差异对比
+
+| | 跨栏标题布局 | 蛇形（无跨栏标题） |
+|--|--|--|
+| `h1.section-title: column-span` | `all` | 无（删除该行） |
+| `.two-column: column-fill` | `auto` | `balance`（默认，删除该行即可）|
+| 阅读体验 | 按章节分块感，适合快速跳转 | 连续流动感，适合线性阅读 |
+| 排版复杂度 | 低 | 略高（需注意封面页特例） |
+
+### 切换方法（两步，修改 `<style>` 块）
+
+**第一步**：删除 `h1.section-title` 的 `column-span: all;`
+
+```css
+/* ✅ 蛇形布局：h1 不跨栏 */
+h1.section-title {
+    /* 删除 column-span: all; */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: left;
+    margin: 6mm 0 3mm 0;
+}
+```
+
+**第二步**：删除 `.two-column` 的 `column-fill: auto;`（默认值 `balance` 自动生效，避免单侧留白）
+
+```css
+/* ✅ 蛇形布局：column-fill 保持默认 balance */
+.two-column {
+    column-count: 2;
+    column-gap: var(--column-gap);
+    /* 删除 column-fill: auto; */
+    text-align: justify;
+}
+```
+
+### 封面页底部特例处理（MANDATORY）
+
+**问题**：封面页（Page 1）底部通常只有 Introduction 标题 + 1-2 段正文，内容较少。若标题不跨栏，标题的额外高度（11pt font + 3mm margin ≈ 31px）会导致左右两栏底部不齐。
+
+**根因分析**：
+- `h1` 高度 ≈ 31px（11pt × 1.35 line-height + 3mm margin）
+- 正文行高 ≈ 16px（9pt × 1.35 × 96/72）
+- 11行正文 ÷ 2 = 5.5行/栏，但含标题的左栏 = 31px + 5行 ≈ 7.9行当量，右栏 = 6行当量
+- 无论 CSS balance 如何取整，左右栏总差 ~1行，永远无法完美均衡
+
+**解决方案（已验证）**：
+
+1. **该 `h1` 内联加 `style="column-span:all;"`**（只覆盖这一处，不影响其他页）
+2. **长段拆成两段**：在语义切分点（句子结尾）拆为两个 `<p>`，让 CSS balance 各放一栏
+
+```html
+<!-- ✅ 封面页底部迷你双栏 - 特例处理 -->
+<div class="two-column" style="margin-top:6mm;">
+    <!-- 仅封面页 h1 例外加 column-span:all，其他页的 h1 不加 -->
+    <h1 class="section-title" style="column-span:all;">1 INTRODUCTION</h1>
+    <!-- 第一段（约5行）→ 放入左栏 -->
+    <p class="no-indent">Cancer is widely acknowledged...countries [1].</p>
+    <!-- 第二段（约5行）→ 放入右栏 -->
+    <p>Notably, lung cancer is the second...unresectable stage [2].</p>
+</div>
+```
+
+**判断是否需要处理**：
+
+| 封面页底部 Introduction 内容量 | 处理方式 |
+|-------------------------------|---------|
+| ≤ 2 段正文 | 需特例处理（h1 跨栏 + 拆段） |
+| ≥ 3 段正文 | CSS balance 自然均衡，无需处理 |
+| 仅标题无段落 | 不使用双栏，正文直接从 Page 2 开始 |
 
 ---
 
@@ -736,3 +825,66 @@ if validation_failed:
   - 三线表缺线（顶/底/表头分隔线）
   - tbody 内部行有多余 border
 - 均为空 → 结构检查 **PASS**
+
+---
+
+### 8. 留白修复：逐页行距调整（兜底方案）
+
+> **正文部分行距统一为 1.4**（`body { line-height: 1.4; }` 全局值），不得随意按页覆盖。
+> 以下方案**仅在数学上确认内容总量不足、内容重排无法消除留白时才允许使用**。
+
+#### 8.1 何时启用
+
+满足以下全部条件：
+
+1. Playwright 报告显示 ≥4 页有 WARNING/FAILURE 留白
+2. 相邻页均已接近填满，段落无法在页间移动（移过去会造成溢出）
+3. `Σ actualHeight（所有页）< N × 952px`，总量差距 > 200px
+
+#### 8.2 约束：哪些页可以调整行距
+
+| 页面类型 | 是否允许调整 | 原因 |
+|---------|------------|------|
+| 纯文字页（Introduction、Methods、Discussion 等） | ✅ 允许 | 文字行高线性可缩放 |
+| 纯表格页（整页都是大表，如 P5/P6） | ❌ 禁止 | `table { line-height: 1.3; }` 固定，调整无效 |
+| 混合页（表格 + 文字，如 P7） | ✅ 允许，但所需值可能 >2.0 | 只有文字部分缩放，表格行高不变 |
+| 封面页（P1） | 视内容决定 | 封面元素固定较多，效果有限 |
+
+#### 8.3 分析公式：固定量 vs 可缩放量
+
+在两个不同行距下用 Playwright 各测量一次页面实高，推导出：
+
+```
+# 在 LH = L1 时，实测高度 H1
+# 在 LH = L2 时，实测高度 H2（L2 ≠ L1）
+
+text_rows = (H2 - H1) / (L2 - L1)   # 可随行距缩放的文字高度
+fixed     = H1 - text_rows * L1       # 固定高度（表格、图片、margin 等）
+
+# 目标：使实高 = target_H（建议 932px，即 952px 容量 - 20px 缓冲）
+target_LH = (target_H - fixed) / text_rows
+```
+
+#### 8.4 常见陷阱
+
+| 陷阱 | 表现 | 解决方法 |
+|------|------|---------|
+| `column-span:none` 表格的 margin 效果减半 | 增大 margin 后页面高度只增加预期的一半 | 不要依赖 margin，改用行距 |
+| 嵌套 `<div class="references" style="line-height:X;">` 覆盖 | 修改 `.page-content` 行距后 References 区域高度不变 | 同步修改 references div 的 `style="line-height:X;"` |
+| 混合页（表格+文字）需要极高行距 | P7 类页面在 LH=1.6 时仍留白很大 | 用 8.3 公式计算，结果可能为 2.2+ 属正常 |
+
+#### 8.5 操作流程
+
+1. **基线测量**：Playwright 测量所有页面高度，记录 WARNING/FAILURE 页
+2. **验证总量不足**：检查是否满足 8.1 三个条件
+3. **逐页计算**：
+   - 纯文字页：以 0.05 步进从 1.4 试探（如 1.62、1.67 等）
+   - 混合页：在两个 LH 下各测一次，代入 8.3 公式精确计算
+4. **同步嵌套 div**：检查页内是否有 `<div class="references" style="line-height:X;">` 等嵌套覆盖，同步修改
+5. **批量验证**：Playwright 验证全部页面直至所有页留白 ≤20px、溢出 = 0
+
+#### 8.6 验收标准
+
+- 所有页面 `whitespacePx ≤ 20`
+- 所有页面 `overflowPx = 0`
+- 结构检查（三线表、续表）全部 PASS

@@ -4,7 +4,7 @@ description: |
   将Word学术论文转换为MedBA Medicine期刊HTML格式。支持双栏分页(PDF下载)和单栏连续(在线预览)两种输出。
   自动为参考文献添加验证后的元数据链接(PubMed | Google Scholar | Crossref)。
   使用场景：当用户提供Word格式的学术论文并要求排版为期刊HTML格式时使用。
-  触发词：期刊排版
+  触发词：生物期刊排版，生物排版
 mcp:
   pubmed:
     command: npx
@@ -13,34 +13,37 @@ mcp:
     command: npx
     args: ["-y", "@botanicastudios/crossref-mcp"]
 ---
-# 期刊排版技能 (Journal Typesetting) 
+# 期刊排版技能 (Journal Typesetting)
 
 ## 概述
+
 1. 本技能将 Word 格式的学术论文转换为 MedBA Medicine 期刊规定的 HTML 格式，生成两个版本：
-	1. **双栏分页版** - 供 PDF 下载，A 4分页，双栏布局
-	2. **单栏连续版** - 供在线预览，连续滚动，包含参考文献元数据链接
+
+   1. **双栏分页版** - 供 PDF 下载，A 4分页，双栏布局
+   2. **单栏连续版** - 供在线预览，连续滚动，包含参考文献元数据链接
 2. 期刊默认配置
-	- **期刊名称**: MedBA Medicine
-	- **Logo URL**: https://medbam.org/assets/logo.png
-	- **DOI 前缀**: 10.65079/xxx
-	- **网址**: https://medbam.org
-	- **主题色**: #005a8c
+
+   - **期刊名称**: MedBA Medicine
+   - **Logo URL**: https://medbam.org/assets/logo.png
+   - **DOI 前缀**: 10.65079/xxx
+   - **网址**: https://medbam.org
+   - **主题色**: #005a8c
 3. 资源文件
-	
-	| 目录 | 文件 | 说明 |
-	|------|------|------|
-	| 根目录 | `README.md` | Skill 使用说明和快速开始指南 |
-	|  | `SKILL.md` | 完整技能文档（本文档） |
-	| Assets/ | `template-two-column.html` | **双栏分页 HTML 模板**（含分页修复） |
-	|  | `template-single-column.html` | **单栏连续 HTML 模板**（连续滚动） |
-	| Scripts/ | `verify_links.py` | 参考文献链接验证工具 |
-	|  | `html_generator.py` | HTML 生成核心模块（内部） |
-	|  | `style_validator.py` | 样式一致性验证器 |
-	| References/ | `html-structure.md` | HTML 结构和 CSS 类说明 |
-	|  | `reference-links.md` | 参考文献链接生成指南 |
-	|  | `style-mapping.md` | 样式映射表（元素与CSS对应关系） |
-	|  | `pagination-rules.md` | **MANDATORY**: 分页规则、CP3 布局验证（含 Playwright 自动化验证工作流） |
-	|  | `troubleshooting.md` | 常见问题排查指南 |
+
+   | 目录        | 文件                            | 说明                                                                          |
+   | ----------- | ------------------------------- | ----------------------------------------------------------------------------- |
+   | 根目录      | `README.md`                   | Skill 使用说明和快速开始指南                                                  |
+   |             | `SKILL.md`                    | 完整技能文档（本文档）                                                        |
+   | Assets/     | `template-two-column.html`    | **双栏分页 HTML 模板**（含分页修复）                                    |
+   |             | `template-single-column.html` | **单栏连续 HTML 模板**（连续滚动）                                      |
+   | Scripts/    | `verify_links.py`             | 参考文献链接验证工具                                                          |
+   |             | `html_generator.py`           | HTML 生成核心模块（内部）                                                     |
+   |             | `style_validator.py`          | 样式一致性验证器                                                              |
+   | References/ | `html-structure.md`           | HTML 结构和 CSS 类说明                                                        |
+   |             | `reference-links.md`          | 参考文献链接生成指南                                                          |
+   |             | `style-mapping.md`            | 样式映射表（元素与CSS对应关系）                                               |
+   |             | `pagination-rules.md`         | **MANDATORY**: 分页规则、CP3 布局验证（含 Playwright 自动化验证工作流） |
+   |             | `troubleshooting.md`          | 常见问题排查指南                                                              |
 
 ## ⚠️ 大文件写入规则（全局约束）
 
@@ -103,17 +106,17 @@ print("| 输出文件夹 | ✅ PASS | /Users/.../ |")
 
 ## 📍 检查点系统
 
-| 检查点      | 位置   | 验证内容           | 失败操作                   |
-| -------- | ---- | -------------- | ---------------------- |
-| **CP 0** | 步骤0后 | MCP 可用性        | 询问用户：继续 (fallback) 或中止 |
-| **CP 1** | 步骤1后 | 标题、作者、摘要已提取    | 重新解析或手动输入              |
-| **CP 2** | 步骤2后 | 所有图片 URL 格式正确  | 重新收集                   |
-| **CP 3** | 步骤3后 | 双栏 HTML 无溢出/留白（支持 Playwright 自动验证） | 调整分页重新生成               |
-| **CP 4** | 步骤5后 | 参考文献链接数量符合预期   | 记录警告但继续                |
-| **CP 5** | 步骤7  | 通过各项检查         | ❌ 阻止交付                 |
+| 检查点         | 位置    | 验证内容                                          | 失败操作                         |
+| -------------- | ------- | ------------------------------------------------- | -------------------------------- |
+| **CP 0** | 步骤0后 | MCP 可用性                                        | 询问用户：继续 (fallback) 或中止 |
+| **CP 1** | 步骤1后 | 标题、作者、摘要已提取                            | 重新解析或手动输入               |
+| **CP 2** | 步骤2后 | 所有图片 URL 格式正确                             | 重新收集                         |
+| **CP 3** | 步骤3后 | 双栏 HTML 无溢出/留白（支持 Playwright 自动验证） | 调整分页重新生成                 |
+| **CP 4** | 步骤5后 | 参考文献链接数量符合预期                          | 记录警告但继续                   |
+| **CP 5** | 步骤7   | 通过各项检查                                      | ❌ 阻止交付                      |
 
 ---
- 
+
 ## 第0步：依赖检查（MANDATORY - 阻塞性）
 
 ### ⚠️ 硬约束：docx skill 必须可用，MCP 检查不可跳过
@@ -178,11 +181,11 @@ except Exception as e:
 
 ### 0.3 根据结果决定流程
 
-| MCP 状态         | docx 状态  | 处理方式           | 参考文献策略                             |
+| MCP 状态        | docx 状态 | 处理方式           | 参考文献策略                             |
 | --------------- | --------- | ------------------ | ---------------------------------------- |
 | ✅ 两者都可用   | ✅ 可用   | **完整流程** | DOI + PubMed + Crossref + Google Scholar |
-| ⚠️ 仅一个可用 | ✅ 可用   | **部分流程** | DOI + 可用 MCP + Google Scholar           |
-| ❌ 都不可用     | ✅ 可用   | **降级流程** | 仅 DOI 提取 + Google Scholar               |
+| ⚠️ 仅一个可用 | ✅ 可用   | **部分流程** | DOI + 可用 MCP + Google Scholar          |
+| ❌ 都不可用     | ✅ 可用   | **降级流程** | 仅 DOI 提取 + Google Scholar             |
 | 任意            | ❌ 不可用 | **中止**     | 无法继续                                 |
 
 ### 0.4 MCP 不可用时的用户提示
@@ -225,18 +228,18 @@ except Exception as e:
 
 使用 `skill('docx')` 加载 docx 技能，然后读取 Word 文档内容，提取以下结构化信息：
 
-| 元素     | 识别方法                                 |
-| -------- | ---------------------------------------- |
-| 标题     | 第一个"Title"样式段落或前3段中最大字号   |
-| 作者     | 标题后、单位前的逗号分隔姓名             |
-| 单位     | 带上标编号的机构名称列表                 |
+| 元素     | 识别方法                                    |
+| -------- | ------------------------------------------- |
+| 标题     | 第一个"Title"样式段落或前3段中最大字号      |
+| 作者     | 标题后、单位前的逗号分隔姓名                |
+| 单位     | 带上标编号的机构名称列表                    |
 | 通讯作者 | 包含"Corresponding author: "或 Email 的段落 |
-| 摘要     | "Abstract"标签后的结构化内容             |
-| 关键词   | "Keywords: "开头的行                      |
-| 正文章节 | 编号标题（1 INTRODUCTION, 2 METHODS 等）  |
-| 图片     | 图片对象或 `[Figure N]` 占位符          |
-| 表格     | Word 表格对象                             |
-| 参考文献 | "REFERENCES"后的编号列表                 |
+| 摘要     | "Abstract"标签后的结构化内容                |
+| 关键词   | "Keywords: "开头的行                        |
+| 正文章节 | 编号标题（1 INTRODUCTION, 2 METHODS 等）    |
+| 图片     | 图片对象或 `[Figure N]` 占位符            |
+| 表格     | Word 表格对象                               |
+| 参考文献 | "REFERENCES"后的编号列表                    |
 
 ### 1.2 确定简短标题
 
@@ -251,7 +254,7 @@ except Exception as e:
 
 **示例：**
 
-| 原标题                                                                                                                       | 简化后                          |
+| 原标题                                                                                                                    | 简化后                       |
 | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
 | Based on transcriptome analysis of novel prognosis and targeted therapy-related genes with ferroptosis in cervical cancer | Ferroptosis-Cervical-Cancer  |
 | A comprehensive review of machine learning approaches in cardiovascular disease prediction                                | ML-Cardiovascular-Prediction |
@@ -378,10 +381,11 @@ question(questions=[{
 ❌ **禁止推测或生成 CSS** - 不允许根据内容"推测"合适的样式
 ❌ **禁止美化样式** - 不允许使用 AI 生成的"优化"或"美化"样式
 ❌ **禁止修改模板** - 不允许修改 `template-two-column.html` 中的任何 CSS 属性
+⚠️ **正文行距统一为 1.4，谨慎使用逐页覆盖** - 全文行距由 `body { line-height: 1.4; }` 统一控制；首选通过内容重排（移动段落/节标题）消除留白。**仅当数学上确认内容总量不足（Playwright 检测 ≥4 页 WARNING、总量差 >200px 且段落无法移动）时**，才允许对 `.page-content` 使用 `style="line-height:X;"` 覆盖，并按 `references/pagination-rules.md § 8` 的公式和流程执行
 
 ✅ **完全复制 `<style>` 标签** - 从 `template-two-column.html` 第7-280行完整复制整个 `<style>...</style>` 块
 ✅ **严格使用模板 class** - 所有元素必须使用模板中定义的 class 名称（如 `.section-title`, `.two-column`, `.side-by-side-figures`）
-✅ **保留所有 inline style** - 模板中的所有 `style="..."` 属性必须原样保留
+✅ **保留所有 inline style** - 模板中已有的 `style="..."` 属性必须原样保留（注意：这指模板中已存在的 inline style，不允许额外添加行距覆盖）
 
 > 完整样式规则和CSS变量清单 参见 references/style-mapping.md § 全局样式变量 和 § 页面容器样式
 
@@ -398,6 +402,15 @@ question(questions=[{
 - **禁止溢出**：内容绝不能超出页面边界
 - **零留白容忍**：页底不得有可见空白；若当前段落无法填满，必须继续拉入下一段或下一节内容
 - **表格溢出处理**：先压缩间距（参见步骤3.4 Phase 1），压缩不够再跨页分割（参见步骤3.4 Phase 2）
+
+**⚠️ 留白修复方法（首选内容重排；内容总量不足时才允许按页调整行距）：**
+
+| 问题 | ✅ 首选修复方式 | ⚠️ 兜底方式（仅当首选无效时） | ❌ 禁止方式 |
+|------|----------------|-------------------------------|------------|
+| 页面留白过多（内容太少） | 将下一页的段落/节标题移入当前页 | 全文内容总量不足时，按 `pagination-rules.md § 8` 的公式迭代调整行距 | 猜测行距值（未经 Playwright 实测） |
+| 页面溢出（内容太多） | 将末尾段落移至下一页开头 | — | 加超大 `line-height` 凑满 |
+| 纯表格页留白（P5/P6 类） | 将后续文字段落移至表格后填充 | — | 调整表格页行距（table 行高固定，无效） |
+| 多页同时留白（数学上总量不足） | — | 逐页迭代行距调整（Playwright 实测 + 8.3 公式） | 不运行 Playwright 直接猜值 |
 
 #### 🤖 人机协同流程（降本增效）
 
@@ -442,6 +455,7 @@ question(questions=[{
 ```
 
 **风险标注规则**：
+
 - 自动验证阈值（Playwright 报告）：
   - 溢出任意值 → 🔴 FAILURE（必须修复）
   - 留白 ≥30mm (113px) → 🔴 FAILURE（必须压缩）
@@ -539,8 +553,8 @@ question(questions=[{
 | 对比项              | ❌ 错误做法            | ✅ 正确做法                         |
 | ------------------- | ---------------------- | ----------------------------------- |
 | **页面结构**  | 所有内容在一个连续容器 | 每页一个独立 `<div class="page">` |
-| **内容控制**  | CSS 自动分配            | 手动计算并分配每页内容              |
-| **分页点**    | CSS 随机决定            | 根据字数精确规划                    |
+| **内容控制**  | CSS 自动分配           | 手动计算并分配每页内容              |
+| **分页点**    | CSS 随机决定           | 根据字数精确规划                    |
 | **留白/溢出** | 无法避免               | 可以精确控制                        |
 
 **可以使用 CSS column，但必须满足：**
@@ -604,12 +618,14 @@ question(questions=[{
 ### 步骤3.4：正文排版细节规则（MANDATORY）
 
 #### 封面页 ORIGINAL ARTICLE 下划线
-- `ORIGINAL ARTICLE` 所在的 `<div>` 必须带有黑色下划线：
+
+- `ORIGINAL ARTICLE` 所在的 `<div>` 必须使用文字下划线（非边框线）：
   ```html
-  <div style="...;border-bottom:1.5pt solid #000;padding-bottom:1mm;display:inline-block;">ORIGINAL ARTICLE</div>
+  <div style="...;text-decoration:underline;text-underline-offset:2mm;">ORIGINAL ARTICLE</div>
   ```
 
 #### 段落缩进规则
+
 - **每章节（一级标题 h1.section-title）后的第一段：顶格（text-indent:0）**，使用 `class="first-paragraph"` 或 `text-indent:0` inline style
 - 同一章节内的第二段及以后各段：正常首行缩进（`text-indent:1em`）
 - **每子节（二级标题 h2.subsection-title）后的第一段同样顶格**
@@ -627,6 +643,7 @@ question(questions=[{
 ```
 
 #### 表格跨栏规则（仅适用于双栏模板）
+
 > ⚠️ 此规则**仅适用于 `template-two-column.html`（双栏分页版）**，单栏模板无需处理表格跨栏。
 
 - **≤ 3 列的表格**：不跨栏，使用 `class="table-wrapper no-span"`（在单栏内显示）
@@ -643,6 +660,78 @@ question(questions=[{
   <table>...</table>   <!-- 4列或更多 -->
 </div>
 ```
+
+#### 表格跨页续表规则（双栏分页版）
+
+当表格行数过多无法在一页内完整显示时，需跨页分割并遵循以下规则：
+
+| 规则     | 说明                                                        |
+| -------- | ----------------------------------------------------------- |
+| 前页底线 | 细线 `border-bottom: 0.75pt solid #000`（表示表格未结束） |
+| 续页顶线 | 粗线 `border-top: 1.5pt solid #000`（标识续表起始）       |
+| 续页表题 | 保留 `Table N. (Continued)`，不重复完整表题               |
+| 续页表头 | 重复 `<thead>` 横表头（含单位注），保证每页可独立阅读     |
+| 表号     | 不重复，仅在首页出现完整表题                                |
+| 表身     | 列对齐一致，不插入正文，栏线齐                              |
+
+**HTML 示例：**
+
+```html
+<!-- 前页：Table N Part 1 -->
+<table style="font-size:7pt;line-height:1.3;border-bottom:0.75pt solid #000;">
+    <thead><tr><th>...</th></tr></thead>
+    <tbody><!-- 前半部分行 --></tbody>
+</table>
+
+<!-- 续页：Table N Part 2 -->
+<div class="table-caption"><span class="tbl-label">Table N.</span> (Continued)</div>
+<table style="font-size:7pt;line-height:1.3;border-top:1.5pt solid #000;">
+    <thead><tr><th>...</th></tr></thead>
+    <tbody><!-- 后半部分行 --></tbody>
+</table>
+```
+
+**线宽规范：粗线 1.5pt，细线 0.75pt**
+
+#### 布局模式说明（蛇形为默认）
+
+- **默认（蛇形布局）**：`h1.section-title` 无 `column-span`，内容连续蛇形流动，适合学术论文线性阅读
+- **备用（跨栏标题布局）**：若需要每章节标题独立成行分隔，切换为跨栏标题布局
+
+**切换为跨栏标题布局（两步）**：
+
+```css
+/* 第1步：在 h1.section-title 加 column-span:all */
+h1.section-title {
+    column-span: all;   /* 加此行 */
+    ...
+}
+
+/* 第2步：在 .two-column 加 column-fill:auto */
+.two-column {
+    column-count: 2;
+    column-gap: var(--column-gap);
+    column-fill: auto;  /* 加此行 */
+    text-align: justify;
+}
+```
+
+**封面页底部特例（蛇形布局时必须处理）**：
+
+封面页底部迷你双栏区（通常只有1-2段 Introduction 内容）在蛇形模式下必须特别处理，否则两栏底部不齐：
+
+1. 给封面页的这个 `h1` 加 `style="column-span:all;"` 内联覆盖（只覆盖这一处）
+2. 将长段拆为两段（在语义切分点），让 CSS balance 各自放一栏
+
+```html
+<div class="two-column" style="margin-top:6mm;">
+    <h1 class="section-title" style="column-span:all;">1 INTRODUCTION</h1>
+    <p class="no-indent">第一组句子（约5行）...</p>   <!-- → 左栏 -->
+    <p>第二组句子（约5行）...</p>                     <!-- → 右栏 -->
+</div>
+```
+
+> 判断规则和根因分析详见 references/pagination-rules.md § 蛇形双栏布局 § 封面页底部特例处理
 
 ---
 
@@ -710,11 +799,11 @@ AskUserQuestion({
 
 **模式对比**：
 
-| 模式      | DOI 提取 | PubMed  | Crossref   | Google Scholar | 耗时    | MCP 调用 |
-| --------- | ------- | ------- | ---------- | -------------- | ------- | ------- |
-| ⚡ 快速   | ✅ 本地 | ❌      | ❌         | ✅ 总是        | <10秒   | 0次     |
-| ⚖️ 标准 | ✅ 本地 | ❌      | ✅ 无 DOI 时 | ✅ 总是        | 30-60秒 | ~15次   |
-| 🔬 完整   | ✅ 本地 | ✅ 全部 | ✅ 无 DOI 时 | ✅ 总是        | 2-5分钟 | ~40次   |
+| 模式      | DOI 提取 | PubMed  | Crossref     | Google Scholar | 耗时    | MCP 调用 |
+| --------- | -------- | ------- | ------------ | -------------- | ------- | -------- |
+| ⚡ 快速   | ✅ 本地  | ❌      | ❌           | ✅ 总是        | <10秒   | 0次      |
+| ⚖️ 标准 | ✅ 本地  | ❌      | ✅ 无 DOI 时 | ✅ 总是        | 30-60秒 | ~15次    |
+| 🔬 完整   | ✅ 本地  | ✅ 全部 | ✅ 无 DOI 时 | ✅ 总是        | 2-5分钟 | ~40次    |
 
 ### 执行策略（严格遵守优先级）
 
@@ -731,6 +820,7 @@ AskUserQuestion({
 ### 步骤5.1-5.5：参考文献链接验证
 
 **执行策略**：
+
 - ✅ 提取已有 DOI → 生成 Crossref 链接
 - ✅ PubMed MCP 查询（有 DOI 用 term，无 DOI 用 title+author）
 - ✅ Crossref MCP 查询（仅无 DOI 文献，80%标题匹配阈值）
@@ -739,6 +829,7 @@ AskUserQuestion({
 - ❌ 低置信度匹配（<80%）必须跳过
 
 **输出格式**：
+
 - 双栏版：DOI 蓝色链接（`#005a8c`），无元数据行
 - 单栏版：DOI 蓝色链接 + 元数据行（PubMed | Scholar | Crossref）
 
@@ -814,9 +905,8 @@ AskUserQuestion({
 
 ### 其他检查项
 
-| 检查项          | 通过标准               | 失败处理                   |
-| --------------- | ---------------------- | -------------------------- |
-| PubMed 链接      | 已尝试验证（有记录）   | WARN: 未执行 PubMed 验证     |
-| Crossref 链接    | 链接数 >= DOI 提取数    | WARN: Crossref 链接少于预期 |
-| 图片 URL 可访问性 | 随机抽取3张验证200状态 | WARN: 部分图片不可访问     |
-
+| 检查项            | 通过标准               | 失败处理                    |
+| ----------------- | ---------------------- | --------------------------- |
+| PubMed 链接       | 已尝试验证（有记录）   | WARN: 未执行 PubMed 验证    |
+| Crossref 链接     | 链接数 >= DOI 提取数   | WARN: Crossref 链接少于预期 |
+| 图片 URL 可访问性 | 随机抽取3张验证200状态 | WARN: 部分图片不可访问      |
