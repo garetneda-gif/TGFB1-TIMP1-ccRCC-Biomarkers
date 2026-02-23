@@ -457,13 +457,14 @@ question(questions=[{
 **风险标注规则**：
 
 - 自动验证阈值（Playwright 报告）：
-  - 溢出任意值 → 🔴 FAILURE（必须修复）
-  - 留白 ≥30mm (113px) → 🔴 FAILURE（必须压缩）
-  - 留白 15-30mm (57-113px) → 🟡 WARNING（建议压缩）
+  - 溢出任意值 → 🔴 FAILURE（必须修复，所有页适用）
+  - 留白 ≥30mm (113px) → 🔴 FAILURE（必须压缩，**最后一页除外**）
+  - 留白 15-30mm (57-113px) → 🟡 WARNING（建议压缩，**最后一页除外**）
+  - **最后一页**：留白不限，参考文献数量不可控，任意留白均为 PASS
 - 人工验证经验值：
   - 溢出 >10mm：标注 🔴（必须修复）
   - 溢出 5-10mm：标注 🟡（建议修复）
-  - 留白 >30mm：标注 🟡（建议压缩）
+  - 留白 >30mm（非最后页）：标注 🟡（建议压缩）
 
 这让用户只需关注标⚠️和❌的页面，而非逐页复核。
 
@@ -626,21 +627,29 @@ question(questions=[{
 
 #### 段落缩进规则
 
-- **每章节（一级标题 h1.section-title）后的第一段：顶格（text-indent:0）**，使用 `class="first-paragraph"` 或 `text-indent:0` inline style
-- 同一章节内的第二段及以后各段：正常首行缩进（`text-indent:1em`）
+- **每章节（一级标题 h1.section-title）后的第一段：顶格（text-indent:0）**，使用 `class="no-indent"` 或 `class="first-paragraph"`
+- 同一章节内的第二段及以后各段：正常首行缩进（`text-indent:1em`，即默认 `<p>`）
 - **每子节（二级标题 h2.subsection-title）后的第一段同样顶格**
+- ❌ **禁止将 `class="no-indent"` 用于非首段**（常见错误：对连续段落批量加 `no-indent`）
 
 ```html
 <!-- ✅ 正确示例 -->
 <h1 class="section-title">1 INTRODUCTION</h1>
-<p class="first-paragraph">第一段顶格，无缩进...</p>
+<p class="no-indent">第一段顶格，无缩进...</p>
 <p>第二段正常缩进...</p>
 <p>第三段正常缩进...</p>
 
 <h2 class="subsection-title">2.1 Data Source</h2>
-<p class="first-paragraph">子节第一段顶格...</p>
+<p class="no-indent">子节第一段顶格...</p>
 <p>子节第二段正常缩进...</p>
 ```
+
+#### 参考文献悬挂缩进规则
+
+- **正文段落**：不使用悬挂缩进，仅使用首行缩进（见上方段落缩进规则）
+- **参考文献区域（`.references div`）**：❌ **不使用悬挂缩进**，所有行齐左对齐
+  - 正确：`.references div { margin-bottom: 2mm; }`（无 `padding-left` 或 `text-indent`）
+  - ❌ 禁止：`padding-left: 1.27cm; text-indent: -1.27cm;`（会导致 PubMed 链接行双重缩进）
 
 #### 表格跨栏规则（仅适用于双栏模板）
 

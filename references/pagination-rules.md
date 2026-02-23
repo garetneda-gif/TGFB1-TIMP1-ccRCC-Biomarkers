@@ -885,6 +885,7 @@ target_LH = (target_H - fixed) / text_rows
 
 #### 8.6 验收标准
 
-- 所有页面 `whitespacePx ≤ 20`
+- **正文页**（第1页至倒数第2页）：`whitespacePx ≤ 20`
+- **最后一页**：留白不限制（参考文献数量不可控，尾页允许有更多留白）
 - 所有页面 `overflowPx = 0`
 - 结构检查（三线表、续表）全部 PASS
