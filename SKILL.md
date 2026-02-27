@@ -4,7 +4,7 @@ description: |
   将Word学术论文转换为MedBA Medicine期刊HTML格式。支持双栏分页(PDF下载)和单栏连续(在线预览)两种输出。
   自动为参考文献添加验证后的元数据链接(PubMed | Google Scholar | Crossref)。
   使用场景：当用户提供Word格式的学术论文并要求排版为期刊HTML格式时使用。
-  触发词：生物期刊排版，生物排版
+  触发词：生物期刊排版，生物排版，MedBA排版
 mcp:
   pubmed:
     command: npx
@@ -381,7 +381,7 @@ question(questions=[{
 ❌ **禁止推测或生成 CSS** - 不允许根据内容"推测"合适的样式
 ❌ **禁止美化样式** - 不允许使用 AI 生成的"优化"或"美化"样式
 ❌ **禁止修改模板** - 不允许修改 `template-two-column.html` 中的任何 CSS 属性
-⚠️ **正文行距统一为 1.4，谨慎使用逐页覆盖** - 全文行距由 `body { line-height: 1.4; }` 统一控制；首选通过内容重排（移动段落/节标题）消除留白。**仅当数学上确认内容总量不足（Playwright 检测 ≥4 页 WARNING、总量差 >200px 且段落无法移动）时**，才允许对 `.page-content` 使用 `style="line-height:X;"` 覆盖，并按 `references/pagination-rules.md § 8` 的公式和流程执行
+⚠️ **正文行距统一为 1.4，谨慎使用逐页覆盖** - 全文行距由 `body { line-height: 1.4; }` 统一控制；行距取值范围严格限制在 1.0–1.9，**严禁设置 ≥2.0 的行距**（包括任何 inline style 覆盖）。首选通过内容重排（移动段落/节标题）消除留白。**仅当数学上确认内容总量不足（Playwright 检测 ≥4 页 WARNING、总量差 >200px 且段落无法移动）时**，才允许对 `.page-content` 使用 `style="line-height:X;"` 覆盖（X 必须 < 2.0），并按 `references/pagination-rules.md § 8` 的公式和流程执行
 
 ✅ **完全复制 `<style>` 标签** - 从 `template-two-column.html` 第7-280行完整复制整个 `<style>...</style>` 块
 ✅ **严格使用模板 class** - 所有元素必须使用模板中定义的 class 名称（如 `.section-title`, `.two-column`, `.side-by-side-figures`）
@@ -397,7 +397,7 @@ question(questions=[{
 
 **分页规则:**
 
-- 封面页：不必独立成页——若封面/摘要区域底部有剩余空间，应将正文（Introduction 等）接续填入，直至页面填满
+- 封面页：不必独立成页——若封面/摘要区域底部有剩余空间，**必须**将 Introduction 等正文内容接续填入，直至页面填满，**摘要页底部绝对不允许留白**。例外：若摘要本身内容过长已占满整个摘要页，则允许 Introduction 另起新页。
 - 正文页：每页约800-1000字；允许孤行（orphan）和寡行（widow），但**绝不允许留白**
 - **禁止溢出**：内容绝不能超出页面边界
 - **零留白容忍**：页底不得有可见空白；若当前段落无法填满，必须继续拉入下一段或下一节内容
@@ -405,12 +405,12 @@ question(questions=[{
 
 **⚠️ 留白修复方法（首选内容重排；内容总量不足时才允许按页调整行距）：**
 
-| 问题 | ✅ 首选修复方式 | ⚠️ 兜底方式（仅当首选无效时） | ❌ 禁止方式 |
-|------|----------------|-------------------------------|------------|
-| 页面留白过多（内容太少） | 将下一页的段落/节标题移入当前页 | 全文内容总量不足时，按 `pagination-rules.md § 8` 的公式迭代调整行距 | 猜测行距值（未经 Playwright 实测） |
-| 页面溢出（内容太多） | 将末尾段落移至下一页开头 | — | 加超大 `line-height` 凑满 |
-| 纯表格页留白（P5/P6 类） | 将后续文字段落移至表格后填充 | — | 调整表格页行距（table 行高固定，无效） |
-| 多页同时留白（数学上总量不足） | — | 逐页迭代行距调整（Playwright 实测 + 8.3 公式） | 不运行 Playwright 直接猜值 |
+| 问题                           | ✅ 首选修复方式                 | ⚠️ 兜底方式（仅当首选无效时）                                        | ❌ 禁止方式                            |
+| ------------------------------ | ------------------------------- | ---------------------------------------------------------------------- | -------------------------------------- |
+| 页面留白过多（内容太少）       | 将下一页的段落/节标题移入当前页 | 全文内容总量不足时，按 `pagination-rules.md § 8` 的公式迭代调整行距 | 猜测行距值（未经 Playwright 实测）     |
+| 页面溢出（内容太多）           | 将末尾段落移至下一页开头        | —                                                                     | 加超大 `line-height` 凑满            |
+| 纯表格页留白（P5/P6 类）       | 将后续文字段落移至表格后填充    | —                                                                     | 调整表格页行距（table 行高固定，无效） |
+| 多页同时留白（数学上总量不足） | —                              | 逐页迭代行距调整（Playwright 实测 + 8.3 公式）                         | 不运行 Playwright 直接猜值             |
 
 #### 🤖 人机协同流程（降本增效）
 
@@ -618,7 +618,13 @@ question(questions=[{
 
 ### 步骤3.4：正文排版细节规则（MANDATORY）
 
-#### 封面页 ORIGINAL ARTICLE 下划线
+#### 图注与表注句点规则（MANDATORY）
+
+- **图注（Figure N）和表注（Table N）后面不加句点**
+- ❌ 错误示例：`Figure 2. Venny Plot`、`Table 1. Patient Demographics`
+- ✅ 正确示例：`Figure 2 Venny Plot`、`Table 1 Patient Demographics`
+- 适用范围：所有 `.fig-caption`、`.table-caption` 元素，以及正文内对图表的编号引用标签
+
 
 - `ORIGINAL ARTICLE` 所在的 `<div>` 必须使用文字下划线（非边框线）：
   ```html
@@ -643,6 +649,19 @@ question(questions=[{
 <p class="no-indent">子节第一段顶格...</p>
 <p>子节第二段正常缩进...</p>
 ```
+
+#### 行末标点与引用号断行规则（MANDATORY）
+
+- **目标**：避免行首出现行末标点和右侧引用号（如 `，。！？；：、`、`”’）】」』`）
+- **两级策略（必须按顺序执行）**：
+  1. **优先压缩行内标点间距**：先移除“字 + 空格 + 标点”的多余空白，优先把标点留在本行
+  2. **仍不足时整体下移**：将“末字 + 标点”（以及“标点 + 右引号/右括号”）视为不可分割单元，整体移到下一行
+- **禁止行为**：
+  - ❌ 禁止出现“标点在行首、前字在上一行”的断裂
+  - ❌ 禁止出现“右引号/右括号在行首、标点在上一行”的断裂
+- **实现建议**：
+  - CSS 层：优先使用严格断行与标点悬挂策略（如 `line-break: strict`）
+  - 文本层：必要时用不可断开字符（如 NBSP / Word Joiner）绑定“末字+标点”与“标点+右引号”
 
 #### 参考文献悬挂缩进规则
 
@@ -678,7 +697,7 @@ question(questions=[{
 | -------- | ----------------------------------------------------------- |
 | 前页底线 | 细线 `border-bottom: 0.75pt solid #000`（表示表格未结束） |
 | 续页顶线 | 粗线 `border-top: 1.5pt solid #000`（标识续表起始）       |
-| 续页表题 | 保留 `Table N. (Continued)`，不重复完整表题               |
+| 续页表题 | 保留 Table N (Continued)，不重复完整表题               |
 | 续页表头 | 重复 `<thead>` 横表头（含单位注），保证每页可独立阅读     |
 | 表号     | 不重复，仅在首页出现完整表题                                |
 | 表身     | 列对齐一致，不插入正文，栏线齐                              |
@@ -693,7 +712,7 @@ question(questions=[{
 </table>
 
 <!-- 续页：Table N Part 2 -->
-<div class="table-caption"><span class="tbl-label">Table N.</span> (Continued)</div>
+<div class="table-caption"><span class="tbl-label">Table N</span> (Continued)</div>
 <table style="font-size:7pt;line-height:1.3;border-top:1.5pt solid #000;">
     <thead><tr><th>...</th></tr></thead>
     <tbody><!-- 后半部分行 --></tbody>
@@ -741,6 +760,8 @@ h1.section-title {
 ```
 
 > 判断规则和根因分析详见 references/pagination-rules.md § 蛇形双栏布局 § 封面页底部特例处理
+
+> 双栏底部对齐（flush bottom）的完整工作流参见 references/pagination-rules.md § 8
 
 ---
 
