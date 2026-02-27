@@ -1,0 +1,4 @@
+769:`two-column-{short-title}.html`
+797:`single-column-{short-title}.html`
+896:├── two-column-Ferroptosis-Cervical-Cancer.html
+897:└── single-column-Ferroptosis-Cervical-Cancer.html

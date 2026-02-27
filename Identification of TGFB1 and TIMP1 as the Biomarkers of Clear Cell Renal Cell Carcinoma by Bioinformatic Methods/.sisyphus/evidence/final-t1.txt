@@ -1,0 +1,1 @@
+384:⚠️ **正文行距统一为 1.4，谨慎使用逐页覆盖** - 全文行距由 `body { line-height: 1.4; }` 统一控制；行距取值范围严格限制在 1.0–1.9，**严禁设置 ≥2.0 的行距**（包括任何 inline style 覆盖）。首选通过内容重排（移动段落/节标题）消除留白。**仅当数学上确认内容总量不足（Playwright 检测 ≥4 页 WARNING、总量差 >200px 且段落无法移动）时**，才允许对 `.page-content` 使用 `style="line-height:X;"` 覆盖（X 必须 < 2.0），并按 `references/pagination-rules.md § 8` 的公式和流程执行

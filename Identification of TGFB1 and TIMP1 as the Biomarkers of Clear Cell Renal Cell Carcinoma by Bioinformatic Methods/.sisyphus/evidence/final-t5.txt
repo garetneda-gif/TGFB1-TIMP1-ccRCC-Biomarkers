@@ -1,0 +1,4 @@
+653:#### 英文连字符跨栏断词规则（MANDATORY）
+664:hyphens: auto;
+665:-webkit-hyphens: auto;
+669:**lang 属性要求**：`<html>` 标签必须声明 `lang="en"`，否则 `hyphens: auto` 无法激活。
