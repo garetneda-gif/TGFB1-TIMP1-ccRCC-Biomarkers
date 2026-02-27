@@ -650,7 +650,26 @@ question(questions=[{
 <p>子节第二段正常缩进...</p>
 ```
 
-#### 行末标点与引用号断行规则（MANDATORY）
+#### 英文连字符跨栏断词规则（MANDATORY）
+
+双栏布局中，英文单词在栏尾无法完整容纳时，**必须**在音节处插入连字符（`-`）断开，剩余部分在下一栏（或下一行）续写。禁止整词跳到下一栏导致上一栏末尾出现大段空白。
+
+**实际效果参考**：
+- ✅ 正确：左栏末 `[1].N-` → 右栏首 `otably, lung cancer...`（单词 Notably 跨栏断词）
+- ❌ 错误：左栏末大段空白，整个单词 `Notably` 完整跳到右栏首行
+
+**CSS 实现（必须写入 `.two-column` 或 `body` 样式）**：
+```css
+/* 英文自动断词 - 双栏必须启用 */
+hyphens: auto;
+-webkit-hyphens: auto;
+overflow-wrap: break-word;
+```
+
+**lang 属性要求**：`<html>` 标签必须声明 `lang="en"`，否则 `hyphens: auto` 无法激活。
+
+- **适用范围**：双栏分页版（`template-two-column.html`）**强制启用**；单栏连续版建议启用
+
 
 - **目标**：避免行首出现行末标点和右侧引用号（如 `，。！？；：、`、`”’）】」』`）
 - **两级策略（必须按顺序执行）**：
@@ -721,28 +740,10 @@ question(questions=[{
 
 **线宽规范：粗线 1.5pt，细线 0.75pt**
 
-#### 布局模式说明（蛇形为默认）
+#### 布局模式：强制蛇形（MANDATORY）
 
-- **默认（蛇形布局）**：`h1.section-title` 无 `column-span`，内容连续蛇形流动，适合学术论文线性阅读
-- **备用（跨栏标题布局）**：若需要每章节标题独立成行分隔，切换为跨栏标题布局
-
-**切换为跨栏标题布局（两步）**：
-
-```css
-/* 第1步：在 h1.section-title 加 column-span:all */
-h1.section-title {
-    column-span: all;   /* 加此行 */
-    ...
-}
-
-/* 第2步：在 .two-column 加 column-fill:auto */
-.two-column {
-    column-count: 2;
-    column-gap: var(--column-gap);
-    column-fill: auto;  /* 加此行 */
-    text-align: justify;
-}
-```
+- **✅ 强制使用（蛇形布局）**：`h1.section-title` 无 `column-span`，内容连续蛇形流动，适合学术论文线性阅读。**所有排版必须使用蛇形布局，禁止切换为其他布局。**
+- **❌ 禁止使用（跨栏标题布局）**：禁止将 `column-span:all` 应用于 `h1.section-title`，禁止使用 `column-fill:auto`，禁止以任何形式切换为跨栏标题布局。
 
 **封面页底部特例（蛇形布局时必须处理）**：
 
@@ -762,6 +763,10 @@ h1.section-title {
 > 判断规则和根因分析详见 references/pagination-rules.md § 蛇形双栏布局 § 封面页底部特例处理
 
 > 双栏底部对齐（flush bottom）的完整工作流参见 references/pagination-rules.md § 8
+
+### 输出文件
+
+`two-column-{short-title}.html`
 
 ---
 
@@ -789,7 +794,7 @@ h1.section-title {
 
 ### 输出文件
 
-`单栏连续-{简短标题}.html`
+`single-column-{short-title}.html`
 
 ### 📊 进度追踪
 
@@ -888,8 +893,8 @@ AskUserQuestion({
 
 ```
 /Users/jikunren/Documents/期刊排版/Ferroptosis-Cervical-Cancer/
-├── 双栏分页-Ferroptosis-Cervical-Cancer.html
-└── 单栏连续-Ferroptosis-Cervical-Cancer.html
+├── two-column-Ferroptosis-Cervical-Cancer.html
+└── single-column-Ferroptosis-Cervical-Cancer.html
 ```
 
 ### 📊 进度追踪
