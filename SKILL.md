@@ -666,6 +666,59 @@ question(questions=[{
 - **适用范围**：双栏分页版（`template-two-column.html`）左栏**强制启用**
 - **浏览器兼容**：所有现代浏览器均支持 `text-align-last`
 
+#### MathML 数学公式排版规则（MANDATORY）
+
+所有数学公式**必须**使用 MathML 原生标签渲染，禁止使用 CSS hack（如 `border-top` 模拟根号横线）或 `<sup>` 标签模拟上标。
+
+**MathML 优势**：
+- 浏览器原生渲染，无需额外 CSS
+- 语义化标记，支持无障碍访问
+- 自动处理符号间距和对齐
+
+**常用标签速查**：
+
+| 标签 | 用途 | 示例 |
+|------|------|------|
+| `<math>` | MathML 根元素，包裹所有数学内容 | `<math>...</math>` |
+| `<msqrt>` | 根号（自动渲染 √ 和 vinculum 横线） | `<msqrt><mi>x</mi></msqrt>` → √x |
+| `<msup>` | 上标 | `<msup><mi>x</mi><mn>2</mn></msup>` → x² |
+| `<msub>` | 下标 | `<msub><mi>x</mi><mn>1</mn></msub>` → x₁ |
+| `<msubsup>` | 同时带上标和下标 | `<msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup>` → x₁² |
+| `<mfrac>` | 分数 | `<mfrac><mn>1</mn><mn>2</mn></mfrac>` → ½ |
+| `<mover>` | 上方符号（如横线、箭头） | `<mover><mi>x</mi><mo>¯</mo></mover>` → x̄ |
+| `<munder>` | 下方符号 | `<munder><mi>lim</mi><mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow></munder>` |
+| `<mi>` | 数学标识符（变量、函数名） | `<mi>x</mi>`, `<mi>sin</mi>` |
+| `<mn>` | 数字 | `<mn>42</mn>` |
+| `<mo>` | 运算符 | `<mo>+</mo>`, `<mo>=</mo>` |
+| `<mtext>` | 普通文本（公式内注释） | `<mtext>其中</mtext>` |
+
+**完整示例 — 二次公式**：
+```html
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mo>-</mo><mi>b</mi>
+      <mo>±</mo>
+      <msqrt>
+        <msup><mi>b</mi><mn>2</mn></msup>
+        <mo>-</mo>
+        <mn>4</mn><mi>a</mi><mi>c</mi>
+      </msqrt>
+    </mrow>
+    <mrow>
+      <mn>2</mn><mi>a</mi>
+    </mrow>
+  </mfrac>
+</math>
+```
+
+**注意事项**：
+- HTML5 文档中可省略 `xmlns` 属性，但建议保留以确保兼容性
+- 所有现代浏览器（Chrome 109+, Firefox 100+, Safari 14.1+, Edge 109+）原生支持 MathML
+- 复杂公式建议使用在线工具（如 MathML Central）生成后复制
+
 #### 参考文献悬挂缩进规则
 
 - **正文段落**：不使用悬挂缩进，仅使用首行缩进（见上方段落缩进规则）
