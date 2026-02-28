@@ -423,7 +423,12 @@ question(questions=[{
 **Phase 2: 双栏分页转换**
 1. 生成初版 HTML。
 2. 检查分页摘要表。
-3. **【验证】布局检查（CP3）**
+3. **【前置】CP3.0 文件完整性核验**（必须在 Playwright 验证前执行）
+   - 检查文件末尾是否以 `</html>` 结尾
+   - 检查参考文献页是否存在（含 REFERENCES 或参考文献关键词）
+   - 检查页数是否达到预期最小值（`pagination-rules.md` §CP3.0 有完整代码）
+   - ⚠️ 任何一项失败 → **停止验证，重新生成 HTML**
+4. **【验证】布局检查（CP3）**
    - **自动验证（推荐）**：AI 使用 Playwright MCP 按 `pagination-rules.md` （位于'references/pagination-rules.md ## Playwright 自动布局验证一节'）工作流自动测量溢出/留白，输出报告后自行修复
    - **人工验证（备用）**：用户在浏览器中逐页检查分页效果
    检查点：详见下方风险标注规则。
@@ -605,6 +610,8 @@ question(questions=[{
 **CRITICAL** - 为每页手动创建独立的 `<div class="page">`，每页包含精确计算的内容（约600-900词纯文字或300-500词含图表）。
 
 **⚠️ 禁止追加模式** - 必须一次性生成完整 HTML 字符串再写入文件，禁止多次调用 Edit/Write 逐页追加。
+
+**⚠️ 写入完成后立即执行 CP3.0 完整性核验** - 运行 `check_file_completeness()` 确认文件末尾有 `</html>`、含参考文献页、页数达标，再进入 Playwright 布局验证。禁止跳过此步直接验证布局。
 
 > 页面 HTML 构建模板和完整实施流程 参见 references/pagination-rules.md § 手动创建每个页面
 
@@ -905,8 +912,9 @@ AskUserQuestion({
 
 - ✅ 提取已有 DOI → 生成 Crossref 链接
 - ✅ PubMed MCP 查询（有 DOI 用 term，无 DOI 用 title+author）
-- ✅ Crossref MCP 查询（仅无 DOI 文献，80%标题匹配阈值）
-- ✅ Google Scholar 链接（总是生成）
+  - ⚠️ **代理超时降级**：若 PubMed MCP 连续 2 次超时（>10s），自动切换标准模式（仅 Crossref + Google Scholar），不阻塞整体流程，在 CP4 报告中记录"PubMed 跳过（代理超时）"
+- ✅ Crossref MCP 查询（仅无 DOI 文献，80%标题匹配阈值）；若 Crossref MCP 也超时，改用 Bash `urllib` 批量查询 `api.crossref.org`
+- ✅ Google Scholar 链接（总是生成，不依赖外部 MCP）
 - ❌ 禁止臆造 DOI/PMID
 - ❌ 低置信度匹配（<80%）必须跳过
 

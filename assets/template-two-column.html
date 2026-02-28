@@ -161,6 +161,9 @@
             column-span: all;              /* 图片跨越两栏 */
             margin: 5mm 0;
             width: 100%;
+            break-inside: avoid;           /* CSS3：防止图片跨页断裂 */
+            page-break-inside: avoid;      /* 旧版兼容 */
+            -webkit-column-break-inside: avoid; /* WebKit 多栏断裂保护 */
         }
 
         figure img {
@@ -190,6 +193,9 @@
             column-span: all;              /* 表格跨越两栏 */
             margin: 5mm 0 6mm;
             width: 100%;
+            break-inside: avoid;           /* CSS3：防止表格跨页断裂 */
+            page-break-inside: avoid;      /* 旧版兼容 */
+            -webkit-column-break-inside: avoid; /* WebKit 多栏断裂保护 */
         }
 
         /* ≤3列窄表格：不跨栏，在单栏内显示 */
@@ -254,12 +260,16 @@
             display: flex;
             gap: 4mm;                      /* 图片之间的间距 */
             margin: 5mm 0;
+            break-inside: avoid;           /* CSS3：防止并排图片跨页断裂 */
+            page-break-inside: avoid;      /* 旧版兼容 */
+            -webkit-column-break-inside: avoid; /* WebKit 多栏断裂保护 */
         }
 
         .side-by-side-figures figure {
             flex: 1;                       /* 图片等宽分布 */
             margin: 0;
             min-width: 0;
+            -webkit-column-break-inside: avoid; /* WebKit 子元素断裂保护 */
         }
 
         /* ============ 打印模式样式 ============ */
@@ -373,7 +383,7 @@
                         
                         <!-- 关键词 -->
                         <div style="margin-top:2mm;">
-                            <span style="font-weight:bold;">Keywords:</span> Cervical cancer; Gene signature; Prognostic; TCGA; Ferroptosis; Overall survival
+                            <span style="font-weight:bold;">Keywords:</span> Cervical cancer, Gene signature, Prognostic, TCGA; Ferroptosis, Overall survival
                         </div>
                     </div>
                 </div>
@@ -413,18 +423,18 @@
         <div class="side-by-side-figures">
             <figure id="fig-1">
                 <img src="https://medbam.org/assets/Ferroptosis-Cervical-Cancer/Figure 1.png" alt="Figure 1">
-                <figcaption><span class="fig-label">Figure 1.</span> The flowchart of the study.</figcaption>
+                <figcaption><span class="fig-label">Figure 1</span> The flowchart of the study.</figcaption>
             </figure>
             <figure id="fig-2">
                 <img src="https://medbam.org/assets/Ferroptosis-Cervical-Cancer/Figure 2.png" alt="Figure 2">
-                <figcaption><span class="fig-label">Figure 2.</span> Venny Plot.</figcaption>
+                <figcaption><span class="fig-label">Figure 2</span> Venny Plot.</figcaption>
             </figure>
         </div>
 
         <!-- ============ 跨栏长表（>3列，跨栏显示） ============ -->
         <!-- ⚠️ 排版规则：>3列用 class="table-wrapper"（跨栏），≤3列用 class="table-wrapper no-span"（不跨栏） -->
         <div class="table-wrapper" id="tbl-1" style="margin-top:4mm;">
-            <div class="table-caption"><span class="tbl-label">Table 1.</span> Long cross-column signal detection table layout example.</div>
+            <div class="table-caption"><span class="tbl-label">Table 1</span> Long cross-column signal detection table layout example.</div>
             <table style="font-size:7.5pt;line-height:1.25;">
                 <thead>
                     <tr>

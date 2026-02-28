@@ -252,6 +252,97 @@ export JOURNAL_OUTPUT_DIR="/path/to/custom/dir"
 
 ---
 
+---
+
+### 9. WebKit 多栏隐藏文本
+
+#### 问题：段落内容在 Safari/Comet（WebKit）中消失，Chrome 正常
+
+**现象**：双栏版在 Chrome 显示完整，但在 Safari 或基于 WebKit 的阅读器中，某个章节（如 2.2 节的长段落）内容缺失或被截断。
+
+**根因**：
+- WebKit 多栏（`column-count`）的列高度计算与 Chromium 存在差异
+- 超长段落内容被推入第 3 列（不可见），然后被 `.page-content { overflow: hidden }` 裁切
+- CSS `orphans`/`widows` 属性在 WebKit 多栏模式下**不可靠**，无法依赖它控制断列行为
+
+**排查步骤**：
+
+```bash
+# 1. 用 Playwright WebKit 引擎截图对比
+python3 - <<'EOF'
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    browser = p.webkit.launch()
+    page = browser.new_page(viewport={"width": 794, "height": 1123})
+    page.goto("http://localhost:8080/your-file.html")
+    page.screenshot(path="webkit-check.png", full_page=True)
+    browser.close()
+EOF
+
+# 2. 对比 Chromium 截图
+# 将 p.webkit 改为 p.chromium 重跑一次
+```
+
+**修复方案**：
+
+方案 A（推荐）：在问题段落添加 WebKit 断列保护
+```html
+<!-- 对超长段落（>200字的连续文本）添加内联样式 -->
+<p style="-webkit-column-break-inside: avoid; break-inside: avoid;">
+    该段落的完整内容...
+</p>
+```
+
+方案 B：拆分超长段落
+```html
+<!-- 将一个超长段落拆为两个较短段落 -->
+<p>原段落前半部分（约100字）...</p>
+<p>原段落后半部分（约100字）...</p>
+```
+
+方案 C：检查模板 CSS 中是否遗漏了 WebKit 前缀
+```css
+/* 确认 figure 和 .side-by-side-figures 已有此规则 */
+-webkit-column-break-inside: avoid;
+```
+
+**注意**：不要将 `break-inside: avoid` 加到所有 `<p>` 标签——这会导致大量留白，因为 WebKit 会将整段推到下一列。只对**具体出问题的长段落**单独处理。
+
+---
+
+### 10. 验证脚本退出码被管道覆盖
+
+#### 问题：验证脚本对错误文件返回退出码 0，误认为通过
+
+**现象**：
+```bash
+python3 style_validator.py bad.html | grep "FAIL"
+echo $?    # 输出 0，但实际应该失败！
+```
+
+**根因**：`$?` 捕获的是**管道最后一个命令**（即 `grep`）的退出码，而非 Python 脚本的退出码。`grep` 找到匹配行时返回 0，与脚本是否失败无关。
+
+**正确做法**：
+```bash
+# ✅ 先捕获脚本退出码，再过滤输出
+OUTPUT=$(python3 style_validator.py bad.html 2>&1)
+EXIT_CODE=$?
+echo "$OUTPUT" | grep "FAIL"
+echo "脚本退出码: $EXIT_CODE"   # 应为 1
+```
+
+**或者用 pipefail**：
+```bash
+# ✅ 设置 pipefail 让管道中任意命令失败时整体失败
+set -o pipefail
+python3 style_validator.py bad.html | grep "FAIL"
+echo "退出码: $?"   # 现在会正确反映脚本退出码
+```
+
+**原则**：所有自动化检查脚本都必须用独立变量捕获退出码，禁止依赖管道后的 `$?`。
+
+---
+
 ## 获取帮助
 
 如果以上方案都无法解决问题，请：

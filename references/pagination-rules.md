@@ -4,6 +4,61 @@
 
 ---
 
+## CP3.0：文件写入完整性核验（布局验证前置检查）
+
+> **必须在 Playwright 布局验证（CP3）之前执行。** 文件截断是历史上留白/溢出反复修复的主要隐患之一——文件不完整时，布局验证的结果毫无意义。
+
+```python
+def check_file_completeness(html_file_path, expected_min_pages=8):
+    """
+    验证生成的 HTML 文件是否完整（防截断漏检）。
+
+    历史教训：TGFB1 双栏版曾被截断至 320 行，参考文献页完全缺失，
+    但因为没有此检查，直到布局验证阶段才发现问题，浪费大量时间。
+    """
+    with open(html_file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    page_count = content.count('<div class="page">')
+    refs_present = 'REFERENCES' in content or '参考文献' in content
+    ends_properly = content.rstrip().endswith('</html>')
+
+    errors = []
+    if not ends_properly:
+        errors.append("❌ 文件末尾缺少 </html>，文件可能被截断")
+    if not refs_present:
+        errors.append("❌ 参考文献页缺失（未找到 REFERENCES/参考文献关键词），文件可能被截断")
+    if page_count < expected_min_pages:
+        errors.append(f"❌ 页数不足（实际 {page_count} 页 < 预期最少 {expected_min_pages} 页），文件可能被截断")
+
+    if errors:
+        print("=" * 50)
+        print("⛔ 文件完整性检查失败，禁止进入布局验证：")
+        for e in errors:
+            print(f"   {e}")
+        print("=" * 50)
+        raise RuntimeError("文件完整性检查失败")
+
+    print(f"✅ 文件完整性通过：{page_count} 页，含参考文献，</html> 结尾正常")
+    return page_count
+
+
+# 用法：每次生成 HTML 后立即调用，然后再进行 Playwright 验证
+# check_file_completeness('双栏分页-ArticleName.html', expected_min_pages=8)
+```
+
+**判定规则**：
+- `</html>` 缺失 → **立即停止**，重新生成
+- 参考文献关键词缺失 → **立即停止**，检查是否忘记写参考文献页
+- 页数 < 预期最小值 → **立即停止**，检查是否文件被 Write 工具截断
+
+**`expected_min_pages` 参考值**：
+- 10页以内的短论文：`expected_min_pages=6`
+- 典型10-12页论文：`expected_min_pages=8`
+- 长论文（>15页）：`expected_min_pages=12`
+
+---
+
 ## 内容分析和分页规划
 
 ### 步骤3.1：内容分析和分页规划
