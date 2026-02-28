@@ -650,18 +650,74 @@ question(questions=[{
 <p>子节第二段正常缩进...</p>
 ```
 
-#### 行末标点与引用号断行规则（MANDATORY）
+#### 双栏左栏末行对齐规则（MANDATORY）
 
-- **目标**：避免行首出现行末标点和右侧引用号（如 `，。！？；：、`、`”’）】」』`）
-- **两级策略（必须按顺序执行）**：
-  1. **优先压缩行内标点间距**：先移除“字 + 空格 + 标点”的多余空白，优先把标点留在本行
-  2. **仍不足时整体下移**：将“末字 + 标点”（以及“标点 + 右引号/右括号”）视为不可分割单元，整体移到下一行
-- **禁止行为**：
-  - ❌ 禁止出现“标点在行首、前字在上一行”的断裂
-  - ❌ 禁止出现“右引号/右括号在行首、标点在上一行”的断裂
-- **实现建议**：
-  - CSS 层：优先使用严格断行与标点悬挂策略（如 `line-break: strict`）
-  - 文本层：必要时用不可断开字符（如 NBSP / Word Joiner）绑定“末字+标点”与“标点+右引号”
+双栏布局中，左栏最后一行若内容不足整行宽度，**必须**使用 `text-align-last: justify` 强制两端对齐，避免右侧出现大段空白。
+
+**CSS 实现（必须写入 `.column-left` 或对应左栏样式）**：
+```css
+/* 双栏左栏末行强制两端对齐 */
+.column-left p {
+  text-align: justify;
+  text-align-last: justify;
+}
+```
+
+- **适用范围**：双栏分页版（`template-two-column.html`）左栏**强制启用**
+- **浏览器兼容**：所有现代浏览器均支持 `text-align-last`
+
+#### MathML 数学公式排版规则（MANDATORY）
+
+所有数学公式**必须**使用 MathML 原生标签渲染，禁止使用 CSS hack（如 `border-top` 模拟根号横线）或 `<sup>` 标签模拟上标。
+
+**MathML 优势**：
+- 浏览器原生渲染，无需额外 CSS
+- 语义化标记，支持无障碍访问
+- 自动处理符号间距和对齐
+
+**常用标签速查**：
+
+| 标签 | 用途 | 示例 |
+|------|------|------|
+| `<math>` | MathML 根元素，包裹所有数学内容 | `<math>...</math>` |
+| `<msqrt>` | 根号（自动渲染 √ 和 vinculum 横线） | `<msqrt><mi>x</mi></msqrt>` → √x |
+| `<msup>` | 上标 | `<msup><mi>x</mi><mn>2</mn></msup>` → x² |
+| `<msub>` | 下标 | `<msub><mi>x</mi><mn>1</mn></msub>` → x₁ |
+| `<msubsup>` | 同时带上标和下标 | `<msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup>` → x₁² |
+| `<mfrac>` | 分数 | `<mfrac><mn>1</mn><mn>2</mn></mfrac>` → ½ |
+| `<mover>` | 上方符号（如横线、箭头） | `<mover><mi>x</mi><mo>¯</mo></mover>` → x̄ |
+| `<munder>` | 下方符号 | `<munder><mi>lim</mi><mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow></munder>` |
+| `<mi>` | 数学标识符（变量、函数名） | `<mi>x</mi>`, `<mi>sin</mi>` |
+| `<mn>` | 数字 | `<mn>42</mn>` |
+| `<mo>` | 运算符 | `<mo>+</mo>`, `<mo>=</mo>` |
+| `<mtext>` | 普通文本（公式内注释） | `<mtext>其中</mtext>` |
+
+**完整示例 — 二次公式**：
+```html
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <mo>-</mo><mi>b</mi>
+      <mo>±</mo>
+      <msqrt>
+        <msup><mi>b</mi><mn>2</mn></msup>
+        <mo>-</mo>
+        <mn>4</mn><mi>a</mi><mi>c</mi>
+      </msqrt>
+    </mrow>
+    <mrow>
+      <mn>2</mn><mi>a</mi>
+    </mrow>
+  </mfrac>
+</math>
+```
+
+**注意事项**：
+- HTML5 文档中可省略 `xmlns` 属性，但建议保留以确保兼容性
+- 所有现代浏览器（Chrome 109+, Firefox 100+, Safari 14.1+, Edge 109+）原生支持 MathML
+- 复杂公式建议使用在线工具（如 MathML Central）生成后复制
 
 #### 参考文献悬挂缩进规则
 
@@ -721,28 +777,10 @@ question(questions=[{
 
 **线宽规范：粗线 1.5pt，细线 0.75pt**
 
-#### 布局模式说明（蛇形为默认）
+#### 布局模式：强制蛇形（MANDATORY）
 
-- **默认（蛇形布局）**：`h1.section-title` 无 `column-span`，内容连续蛇形流动，适合学术论文线性阅读
-- **备用（跨栏标题布局）**：若需要每章节标题独立成行分隔，切换为跨栏标题布局
-
-**切换为跨栏标题布局（两步）**：
-
-```css
-/* 第1步：在 h1.section-title 加 column-span:all */
-h1.section-title {
-    column-span: all;   /* 加此行 */
-    ...
-}
-
-/* 第2步：在 .two-column 加 column-fill:auto */
-.two-column {
-    column-count: 2;
-    column-gap: var(--column-gap);
-    column-fill: auto;  /* 加此行 */
-    text-align: justify;
-}
-```
+- **✅ 强制使用（蛇形布局）**：`h1.section-title` 无 `column-span`，内容连续蛇形流动，适合学术论文线性阅读。**所有排版必须使用蛇形布局，禁止切换为其他布局。**
+- **❌ 禁止使用（跨栏标题布局）**：禁止将 `column-span:all` 应用于 `h1.section-title`，禁止使用 `column-fill:auto`，禁止以任何形式切换为跨栏标题布局。
 
 **封面页底部特例（蛇形布局时必须处理）**：
 
@@ -762,6 +800,10 @@ h1.section-title {
 > 判断规则和根因分析详见 references/pagination-rules.md § 蛇形双栏布局 § 封面页底部特例处理
 
 > 双栏底部对齐（flush bottom）的完整工作流参见 references/pagination-rules.md § 8
+
+### 输出文件
+
+`two-column-{short-title}.html`
 
 ---
 
@@ -789,7 +831,7 @@ h1.section-title {
 
 ### 输出文件
 
-`单栏连续-{简短标题}.html`
+`single-column-{short-title}.html`
 
 ### 📊 进度追踪
 
@@ -888,8 +930,8 @@ AskUserQuestion({
 
 ```
 /Users/jikunren/Documents/期刊排版/Ferroptosis-Cervical-Cancer/
-├── 双栏分页-Ferroptosis-Cervical-Cancer.html
-└── 单栏连续-Ferroptosis-Cervical-Cancer.html
+├── two-column-Ferroptosis-Cervical-Cancer.html
+└── single-column-Ferroptosis-Cervical-Cancer.html
 ```
 
 ### 📊 进度追踪
