@@ -407,7 +407,7 @@
             </div>
         </div>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">1</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">9</span></div>
 </div>
 
 <!-- ======================================== Page 2: Introduction ======================================== -->
@@ -422,7 +422,7 @@
         <h2 class="subsection-title">2.1 Data Source and Preprocessing</h2>
         <p class="no-indent">Data associated with erlotinib/tarceva was acquired from the open-access database known as the FDA adverse event reporting system (FAERS). The FAERS data utilized in this study were collected and pre-processed using SAS and Navicat for MySQL software. The cleaned and standardized dataset pertaining to erlotinib/Tarceva in FAERS involved the removal of duplicate case records and the mapping of drug names to RxNorm concepts, as well as adverse drug reaction (ADR) outcomes to Medical Dictionary for Regulatory Activities (MedDRA&reg;) concepts [17]. We collected data on erlotinib-related AEs over 17-year period, spanning from the first quarter of 2005 to the last quarter of 2021 (2005Q1-2021Q4). To isolate ADRs associated with erlotinib, we utilized the Individual Safety Report (ISR) number&mdash;a unique identifier assigned to each case in the FAERS database. Duplicate entries were identified by matching ISR numbers across records. When multiple reports referenced the same ISR, only the most recent version of the case was retained to ensure data uniqueness. All AEs were statistically analyzed to extract significant ADRs, subsequently categorizing these ADR terms into preferred terms (PTs) and system organ classes (SOCs), which represent different levels of MedDRA [18].</p>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">2</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">10</span></div>
 </div>
 
 <!-- ======================================== Page 3: Methods ======================================== -->
@@ -456,7 +456,7 @@
 
         <p class="no-indent" style="margin-top:0;"><strong>(I) ROR method</strong></p>
         <p class="no-indent" style="text-align:center;font-size:10pt;margin:2mm 0;">ROR = ad / bc</p>
-        <p class="no-indent" style="text-align:center;margin:1mm 0;"><math style="font-size:9pt;"><mn>95</mn><mo>%</mo><mtext>&nbsp;CI&nbsp;=&nbsp;</mtext><msup><mi>e</mi><mrow><mi>ln</mi><mo>(</mo><mi>ROR</mi><mo>)</mo><mo>&plusmn;</mo><mn>1.96</mn><msqrt><mrow><mfrac><mn>1</mn><mi>a</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>b</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>c</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>d</mi></mfrac></mrow></msqrt></mrow></msup></math></p>
+        <p class="no-indent" style="text-align:center;margin:1mm 0;"><math style="font-size:9pt;"><mn>95</mn><mo>%</mo><mtext>&nbsp;CI&nbsp;=&nbsp;</mtext><msup><mi>e</mi><mrow><mi>ln</mi><mo>(</mo><mi>ROR</mi><mo>)</mo><mo>&plusmn;</mo><mn>1.96</mn><msqrt><mrow><mn>1</mn><mo>/</mo><mi>a</mi><mo>+</mo><mn>1</mn><mo>/</mo><mi>b</mi><mo>+</mo><mn>1</mn><mo>/</mo><mi>c</mi><mo>+</mo><mn>1</mn><mo>/</mo><mi>d</mi></mrow></msqrt></mrow></msup></math></p>
         <p class="no-indent">The criteria of positive signals: the lower limit of 95% CI &gt; 1, N &ge; 3;</p>
 
         <p class="no-indent" style="margin-top:3mm;"><strong>(II) PRR method</strong></p>
@@ -471,7 +471,7 @@
 
         <p class="no-indent" style="margin-top:3mm;"><strong>(IV) EBGM method</strong></p>
         <p class="no-indent" style="text-align:center;font-size:10pt;margin:2mm 0;">EBGM = a(a+b+c+d) / (a+c)(a+b)</p>
-        <p class="no-indent" style="text-align:center;margin:1mm 0;"><math style="font-size:9pt;"><mn>95</mn><mo>%</mo><mtext>&nbsp;CI&nbsp;=&nbsp;</mtext><msup><mi>e</mi><mrow><mi>ln</mi><mo>(</mo><mi>EBGM</mi><mo>)</mo><mo>&plusmn;</mo><mn>1.96</mn><msqrt><mrow><mfrac><mn>1</mn><mi>a</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>b</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>c</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>d</mi></mfrac></mrow></msqrt></mrow></msup></math></p>
+        <p class="no-indent" style="text-align:center;margin:1mm 0;"><math style="font-size:9pt;"><mn>95</mn><mo>%</mo><mtext>&nbsp;CI&nbsp;=&nbsp;</mtext><msup><mi>e</mi><mrow><mi>ln</mi><mo>(</mo><mi>EBGM</mi><mo>)</mo><mo>&plusmn;</mo><mn>1.96</mn><msqrt><mrow><mn>1</mn><mo>/</mo><mi>a</mi><mo>+</mo><mn>1</mn><mo>/</mo><mi>b</mi><mo>+</mo><mn>1</mn><mo>/</mo><mi>c</mi><mo>+</mo><mn>1</mn><mo>/</mo><mi>d</mi></mrow></msqrt></mrow></msup></math></p>
         <p class="no-indent">The criteria of positive signals: EBGM05 &gt; 2 (EBGM05: the lower bound of 95% CI).</p>
 
         <p style="margin-top:3mm;">The effective and favorable ADR results must concurrently satisfy the screening criteria outlined by the aforementioned four methods. All data processing and statistical analyses related to Erlotinib have been conducted utilizing SAS, Navicat for MySQL, WPS Excel, and R software.</p>
@@ -480,7 +480,7 @@
         <p class="no-indent">During the study period spanning from the first quarter of 2005 to the fourth quarter of 2021, a total of 9,360,316 case reports were collected from the FDA Adverse Event Reporting System (FAERS). Among these, after removing duplicate entries and applying four distinct algorithms, 2,870 adverse events (AEs, primarily identified by ROR and PRR) and 177 adverse drug reactions (ADRs, satisfying all four methods) related to erlotinib as the primary suspected drug were identified from 26,957 case reports. The specific clinical characteristics of events associated with erlotinib are detailed in Table 2.</p>
         <p>In the analysis of case reports encompassing all AEs, the gender distribution revealed that females accounted for approximately 38.11% of the total case reports. Regarding age demographics, individuals aged 60 to 69 exhibited a higher incidence of AEs compared to other age groups, representing 6.56% (2,325) of the reports with known age information. Furthermore, the leading countries in the utilization of erlotinib included the United States (18,124 reports, 67.23%), Japan (422 reports, 1.57%), China (334 reports, 1.24%), the United Kingdom (264 reports, 0.98%), and France (264 reports, 0.98%). The most severe outcome associated with AEs was death, accounting for 13,785 reports (38.89%), in contrast to other outcomes such as hospitalization (3,588 reports, 10.12%), life-threatening conditions (253 reports, 0.71%), and disability (118 reports, 0.31%).</p>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">3</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">11</span></div>
 </div>
 
 <!-- ======================================== Page 4: Results + Table 2 ======================================== -->
@@ -533,7 +533,7 @@
         <p class="no-indent">In Table 4, the adverse events (AEs) at the Preferred Term (PT) level account for 177 PTs associated with erlotinib, all of which simultaneously met the criteria of four positive signal screening methods. The five most frequently reported PTs, ranked by case reports, are as follows: death (11,753 cases), rash (4,061 cases), diarrhoea (2,732 cases), disease progression (898 cases), and decreased appetite (724 cases). These findings are consistent with common clinical AEs and align with those documented in the erlotinib drug label (Table 4).</p>
         <p>Additionally, the top five PTs ranked by the IC025 value include dermatitis acneiform (282 cases, IC025 = 5.16), EGFR gene mutation (33 cases, IC025 = 4.85), non-small cell lung cancer metastatic (42 cases, IC025 = 4.73), growth of eyelashes (54 cases, IC025 = 4.58), and metastases to thorax (18 cases, IC025 = 4.41) (see supplementary Table S1). Moreover, several unexpected significant AEs ranked by IC025 at the PT level are not included in the erlotinib label, including alopecia scarring (12 cases), metastases to the neck (19 cases), and nail bed inflammation (11 cases), among others. Additional unexpected and newly identified significant AEs are presented in supplementary Table S1.</p>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">4</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">12</span></div>
 </div>
 
 
@@ -576,7 +576,7 @@
         </div>
 
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">5</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">13</span></div>
 </div>
 
 <!-- ======================================== Page 6: Table 4 Part 1 (rows 1-20) ======================================== -->
@@ -619,7 +619,7 @@
             </table>
         </div>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">6</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">14</span></div>
 </div>
 
 <!-- ======================================== Page 7: Table 4 Part 2 (rows 21-39) + Discussion ======================================== -->
@@ -647,7 +647,7 @@
         <p style="margin-bottom:4mm;">The combination of erlotinib and bevacizumab has been shown to enhance overall survival (OS) in patients with EGFR gene mutations, albeit with accompanying adverse events such as rash and diarrhea [26]. Furthermore, early exposure to erlotinib may be linked to the development of adverse events, while increasing exposure does not appear to affect outcomes in patients with EGFR gene mutations [27]. The 1-year progression-free survival (PFS) rate and median PFS for concurrent erlotinib plus thoracic radiotherapy are reported to be superior to those observed with erlotinib monotherapy [28].</p>
         <p>In our analysis of AEs identified at the PT level, we observed that the top three AEs ranked by case reports were death, rash, and diarrhea. The elevated number of reported deaths may be attributed to the role of erlotinib as a primary suspect, secondary suspect, or in conjunction with other concomitant and interacting medications in this statistical analysis. Furthermore, Suleiman&#39;s team developed models for erlotinib-related AEs, specifically rash and diarrhea, to elucidate insights into erlotinib toxicity. Their findings indicated that the occurrence of rash or diarrhea is prevalent during the early stages of treatment, with a positive correlation between rash incidence and erlotinib exposure [29].</p>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">7</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">15</span></div>
 </div>
 
 <!-- ======================================== Page 8: Discussion cont. ======================================== -->
@@ -667,7 +667,7 @@
         <h2 class="subsection-title">ACKNOWLEDGMENTS</h2>
         <p class="no-indent">This study was performed using the FDA Adverse Event Reporting System (FAERS) source that was provided by the FDA. The information, results, or interpretation of the current study do not represent any opinion of the FDA.</p>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">8</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">16</span></div>
 </div>
 
 <!-- ======================================== Page 9: References ======================================== -->
@@ -713,7 +713,7 @@
             <div>[13] Ma Y, Yang X, Li J, et al. Drug safety concern of Avelumab: real world data analysis in FAERS database. The American Journal of the Medical Sciences, 2026. DOI: <a href="https://doi.org/10.1016/j.amjms.2026.01.003" target="_blank" style="color:#005a8c;text-decoration:none;">10.1016/j.amjms.2026.01.003</a>.<br><span><a href="https://scholar.google.com/scholar?q=Drug%20safety%20concern%20Avelumab%20FAERS%20database" target="_blank" style="color:#005a8c;text-decoration:none;font-size:7.5pt;">Google Scholar</a> | <a href="https://doi.org/10.1016/j.amjms.2026.01.003" target="_blank" style="color:#005a8c;text-decoration:none;font-size:7.5pt;">Crossref</a></span></div>
         </div>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">9</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">17</span></div>
 </div>
 
 <!-- ======================================== Page 10: References cont. ======================================== -->
@@ -744,7 +744,7 @@
             <div>[33] Obradovic J, Todosijevic J, Jurisic V. Side effects of tyrosine kinase inhibitors therapy in patients with non-small cell lung cancer and associations with EGFR polymorphisms: A systematic review and meta-analysis. Oncology Letters, 2022, 25(2): 62. DOI: <a href="https://doi.org/10.3892/ol.2022.13649" target="_blank" style="color:#005a8c;text-decoration:none;">10.3892/ol.2022.13649</a>.<br><span><a href="https://pubmed.ncbi.nlm.nih.gov/36644147/" target="_blank" style="color:#005a8c;text-decoration:none;font-size:7.5pt;">PubMed</a> | <a href="https://scholar.google.com/scholar?q=Side%20effects%20tyrosine%20kinase%20inhibitors%20NSCLC%20EGFR%20polymorphisms%20Obradovic" target="_blank" style="color:#005a8c;text-decoration:none;font-size:7.5pt;">Google Scholar</a> | <a href="https://doi.org/10.3892/ol.2022.13649" target="_blank" style="color:#005a8c;text-decoration:none;font-size:7.5pt;">Crossref</a></span></div>
         </div>
     </div>
-    <div class="page-footer">https://medbam.org<span class="page-num">10</span></div>
+    <div class="page-footer">https://medbam.org<span class="page-num">18</span></div>
 </div>
 
 <script>
