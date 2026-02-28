@@ -666,58 +666,68 @@ question(questions=[{
 - **适用范围**：双栏分页版（`template-two-column.html`）左栏**强制启用**
 - **浏览器兼容**：所有现代浏览器均支持 `text-align-last`
 
-#### MathML 数学公式排版规则（MANDATORY）
+#### MathJax SVG 数学公式排版规则（MANDATORY）
 
-所有数学公式**必须**使用 MathML 原生标签渲染，禁止使用 CSS hack（如 `border-top` 模拟根号横线）或 `<sup>` 标签模拟上标。
+所有数学公式**必须**使用 MathJax 库渲染为 SVG 格式，禁止使用 MathML 原生标签、CSS hack（如 `border-top` 模拟根号横线）或 `<sup>` 标签模拟上标。
 
-**MathML 优势**：
-- 浏览器原生渲染，无需额外 CSS
-- 语义化标记，支持无障碍访问
+**MathJax SVG 优势**：
+- 跨浏览器一致渲染（包括旧版浏览器）
+- 高质量矢量输出，缩放不失真
+- 支持完整 LaTeX 语法
 - 自动处理符号间距和对齐
 
-**常用标签速查**：
+**引入 MathJax（必须添加到 `<head>` 区域）**：
+```html
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']]
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+```
 
-| 标签 | 用途 | 示例 |
+**LaTeX 语法速查**：
+
+| 语法 | 用途 | 示例 |
 |------|------|------|
-| `<math>` | MathML 根元素，包裹所有数学内容 | `<math>...</math>` |
-| `<msqrt>` | 根号（自动渲染 √ 和 vinculum 横线） | `<msqrt><mi>x</mi></msqrt>` → √x |
-| `<msup>` | 上标 | `<msup><mi>x</mi><mn>2</mn></msup>` → x² |
-| `<msub>` | 下标 | `<msub><mi>x</mi><mn>1</mn></msub>` → x₁ |
-| `<msubsup>` | 同时带上标和下标 | `<msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup>` → x₁² |
-| `<mfrac>` | 分数 | `<mfrac><mn>1</mn><mn>2</mn></mfrac>` → ½ |
-| `<mover>` | 上方符号（如横线、箭头） | `<mover><mi>x</mi><mo>¯</mo></mover>` → x̄ |
-| `<munder>` | 下方符号 | `<munder><mi>lim</mi><mrow><mi>x</mi><mo>→</mo><mn>0</mn></mrow></munder>` |
-| `<mi>` | 数学标识符（变量、函数名） | `<mi>x</mi>`, `<mi>sin</mi>` |
-| `<mn>` | 数字 | `<mn>42</mn>` |
-| `<mo>` | 运算符 | `<mo>+</mo>`, `<mo>=</mo>` |
-| `<mtext>` | 普通文本（公式内注释） | `<mtext>其中</mtext>` |
+| `\( ... \)` | 行内公式 | `\( x^2 + y^2 = z^2 \)` |
+| `\[ ... \]` | 块级公式（居中显示） | `\[ E = mc^2 \]` |
+| `^{}` | 上标 | `x^{2}` → x² |
+| `_{}` | 下标 | `x_{1}` → x₁ |
+| `\frac{a}{b}` | 分数 | `\frac{1}{2}` → ½ |
+| `\sqrt{}` | 根号 | `\sqrt{x}` → √x |
+| `\sqrt[n]{}` | n次根号 | `\sqrt[3]{x}` → ∛x |
+| `\sum` | 求和符号 | `\sum_{i=1}^{n}` |
+| `\int` | 积分符号 | `\int_{0}^{\infty}` |
+| `\lim` | 极限 | `\lim_{x \to 0}` |
+| `\overline{}` | 上划线 | `\overline{x}` → x̄ |
+| `\text{}` | 公式内普通文本 | `\text{其中}` |
 
 **完整示例 — 二次公式**：
+
+行内写法：
 ```html
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>x</mi>
-  <mo>=</mo>
-  <mfrac>
-    <mrow>
-      <mo>-</mo><mi>b</mi>
-      <mo>±</mo>
-      <msqrt>
-        <msup><mi>b</mi><mn>2</mn></msup>
-        <mo>-</mo>
-        <mn>4</mn><mi>a</mi><mi>c</mi>
-      </msqrt>
-    </mrow>
-    <mrow>
-      <mn>2</mn><mi>a</mi>
-    </mrow>
-  </mfrac>
-</math>
+<p>二次方程的解为 \( x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \)</p>
+```
+
+块级写法：
+```html
+\[
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\]
 ```
 
 **注意事项**：
-- HTML5 文档中可省略 `xmlns` 属性，但建议保留以确保兼容性
-- 所有现代浏览器（Chrome 109+, Firefox 100+, Safari 14.1+, Edge 109+）原生支持 MathML
-- 复杂公式建议使用在线工具（如 MathML Central）生成后复制
+- MathJax 脚本必须放在 `<head>` 中，且配置对象必须在脚本引入之前定义
+- 使用 `async` 属性异步加载，不阻塞页面渲染
+- SVG 输出可直接导出为高清图片（右键另存）
+- 复杂公式可使用在线 LaTeX 编辑器预览后复制
 
 #### 参考文献悬挂缩进规则
 
