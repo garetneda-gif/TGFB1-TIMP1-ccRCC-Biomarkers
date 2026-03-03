@@ -184,7 +184,7 @@ td { padding: 1mm 2mm; vertical-align: top; }
     <div class="page-footer">https://medbam.org<span class="page-num">2</span></div>
 </div>
 
-<!-- ======== PAGE 3: Methods 2.5-2.6 + Results 3.1+3.2 + Figure 1 ======== -->
+<!-- ======== PAGE 3: Methods 2.5-2.6 + Results 3.1 + Table 1 + 3.2 + Figure 1 + 3.3 ======== -->
 <div class="page">
     <div class="page-header">ZHOU ET AL.</div>
     <div class="page-content two-column">
@@ -198,36 +198,75 @@ td { padding: 1mm 2mm; vertical-align: top; }
         <h2 class="subsection-title">3.1 The TMGs Acquisition</h2>
         <p class="first-paragraph">Through text mining retrieving in GENCLIP3, ninety-nine human TMGs have been obtained (Table 1, the result generation time is July 2021) for further analyses.</p>
 
+        <div class="table-wrapper no-span" id="tbl-1">
+            <div class="table-caption"><span class="tbl-label">Table 1</span> The text mining genes</div>
+            <table>
+                <thead>
+                    <tr><th style="width:18%;">Category</th><th>Gene Symbol</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td style="font-weight:bold;">Text Mining Genes</td><td style="font-style:italic;">MMP2, EGR3, TIMP2, TIMP1, ELN, CALCA, CRP, TRPC4AP, MMP1, EFEMP1, ATXN3, ALB, CYP19A1, HGF, PIK3R1, AMH, PRL, INSL3, MMP9, IL10, MMP13, TNFSF13, ZDHHC2, EBF2, NUGGC, ITGB2, COL7A1, POMC, TIMP3, MCM8, WT1, CUX1, G6PC3, PIK3CA, PIK3CB, ADAMTS6, SLCO1B1, HMGB1, DMD, SAA1, PTPN11, KRAS, TGFBR1, GRB2, PLCG1, CTNNB1, CDC42, CRK, BDNF1, GPT, GCH1, PREG1, UCHL1, GRIK3, CACNA2D2, HSP90AA1, CBL, NRP1, SOS1, MMP14, IGFBP1, F9, SPASM, CARD8, MUC5AC, NFKB1, TFPT, GUSB, AIG1, CALD1, VEGFA, IFNG, ELOVL2, PEPD, P4HB, EIF2AK1, ACE, LOXL1, MET, ZEB1, SIRT1, GATA6, TBX3, TBX2, TBX1, NUCKS1, SP1, COL1A1, ALG1, AR, VIM, DES, AVP, SOX9, PTGS2, HDDC3, RPS4X, TGFB1, BRCA2</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <h2 class="subsection-title">3.2 GO and Pathway Enrichment Analyses</h2>
         <p class="first-paragraph">To gain insights into the characteristics of the TMGs, we conducted GO and biological pathway enrichment analyses. The results are presented in Figure 1A&ndash;D. For BP, the three most significantly enriched terms were the epidermal growth factor receptor signaling pathway (p &lt; 0.001), negative regulation of apoptotic processes (p &lt; 0.001), and positive regulation of cell proliferation (p &lt; 0.001). In terms of CC, the TMGs were predominantly associated with the extracellular region (p &lt; 0.001), extracellular space (p &lt; 0.001), and extracellular matrix (p &lt; 0.001). For MF, significant enrichment was found in endopeptidase activity (p &lt; 0.001), insulin receptor substrate binding (p = 0.001), and neurotrophin TRKA receptor binding (p = 0.012). Additionally, pathway enrichment analysis revealed that the TMGs were significantly involved in the integrin-linked kinase signaling pathway (p &lt; 0.001), regulation of CDC42 activity (p &lt; 0.001), and the AP-1 transcription factor network (p &lt; 0.001).</p>
 
         <figure id="fig-1">
-            <div style="display:flex;align-items:stretch;gap:3mm;">
-                <img src="https://medbam.org/assets/Inguinal-Hernia-Cancer-Pathways/Figure 1.png" alt="Figure 1" style="width:75%;max-height:100mm;height:auto;display:block;flex-shrink:0;">
-                <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:8mm;">
-                    <div style="font-size:6pt;line-height:1.5;color:#000;text-align:left;">
-                        <p style="margin:0 0 1mm 0;">(A) GO enrichment analysis in Biological Process category.</p>
-                        <p style="margin:0 0 1mm 0;">(B) GO enrichment analysis in Cellular Component category.</p>
-                        <p style="margin:0 0 1mm 0;">(C) GO enrichment analysis in Molecular Function category.</p>
-                        <p style="margin:0;">(D) Pathway enrichment analysis. (p &lt; 0.001) are significantly enriched.</p>
-                    </div>
-                </div>
-            </div>
-            <figcaption><span class="fig-label">Figure 1</span> The Gene Ontology (GO) and pathway enrichment analyses of text mining genes (TMGs).</figcaption>
+            <img src="https://medbam.org/assets/Inguinal-Hernia-Cancer-Pathways/Figure 1.png" alt="Figure 1" style="max-height:100mm;">
+            <figcaption><span class="fig-label">Figure 1</span> The Gene Ontology (GO) and pathway enrichment analyses of text mining genes (TMGs). (A) GO enrichment analysis in Biological Process category. (B) GO enrichment analysis in Cellular Component category. (C) GO enrichment analysis in Molecular Function category. (D) Pathway enrichment analysis. (p &lt; 0.001) are significantly enriched.</figcaption>
         </figure>
-        <p style="margin-top:2mm;"></p><h2 class="subsection-title">3.3 PPINs Construction and Gene Module Selection</h2>
-        <p style="margin-top:2mm;"></p><p class="first-paragraph">As illustrated in Figure 2A, 69 genes/nodes/proteins were involved in the PPINs, with a total of 270 edges. Among these, 25 genes displayed a high degree of connectivity, each being associated with more than 10 other genes, based on degree scores. The top 10 hub genes identified were VEGFA, HGF, CTNNB1, PIK3CA, PIK3R1, MMP9, ALB, HSP90AA1, GRB2, and MMP2 (Table 2).</p>
-        <p>Clustering analysis was performed to identify genes/nodes/proteins that were more densely connected within the PPINs, utilizing seven interaction types. The analysis revealed a significant gene module (module 1), comprising 22 genes, which included TIMP1, SAA1, POMC, TGFB1, MMP1, MMP2, MMP9, IL10, HGF, VEGFA, MET, PLCG1, CRK, PTPN11, CDC42, PIK3CA, PIK3CB, PIK3R1, SOS1, GRB2, CBL, and KRAS (Figure 2B).</p>
+    <p style="margin-top:1mm;"></p><h2 class="subsection-title">3.3 PPINs Construction and Gene Module Selection</h2>
+        <p class="first-paragraph">As illustrated in Figure 2A, 69 genes/nodes/proteins were involved in the PPINs, with a total of 270 edges. Among these, 25 genes displayed a high degree of connectivity, each being associated with more than 10 other genes, based on degree scores. The top 10 hub genes identified were VEGFA, HGF, CTNNB1, PIK3CA, PIK3R1, MMP9, ALB, HSP90AA1, GRB2, and MMP2 (Table 2).</p>
     </div>
     <div class="page-footer">https://medbam.org<span class="page-num">3</span></div>
 </div>
 
-<!-- ======== PAGE 4: Results 3.4 + Discussion para1+2+3 ======== -->
+<!-- ======== PAGE 4: Table 2 + Clustering + 3.4 + Discussion para1-6 ======== -->
 <div class="page">
     <div class="page-header">ZHOU ET AL.</div>
-    <div class="page-content two-column" style="line-height:1.55;">
-        <h2 class="subsection-title" style="margin-top:0;">3.4 Potential Drugs Selection and Signal Pathway Analyses</h2>
-    <p style="margin-top:2mm;"></p><p class="first-paragraph">We identified 46 drugs or compounds that matched 14 gene targets using the DGIdb database. These drugs interact with the gene targets through various mechanisms, such as binding, agonism, and antibody interactions. In addition, GO and KEGG pathway analyses were performed on the 14 candidate genes, yielding 20 significant KEGG signaling pathway terms. As shown in Figure 3, the Sankey plot illustrates the connections between the drugs, genes, and KEGG pathways. The top enriched KEGG pathways included Pancreatic cancer, Proteoglycans in cancer, Pathways in cancer, and Renal cell carcinoma. Notably, the top three pathways are all associated with cancer, suggesting a potential link between these gene targets and cancer-related mechanisms.</p>
+    <div class="page-content two-column">
+        <div class="table-wrapper no-span" id="tbl-2">
+            <div class="table-caption"><span class="tbl-label">Table 2</span> The degree of genes associated with another genes</div>
+            <table>
+                <thead>
+                    <tr><th>Genes</th><th style="text-align:center;">Degree</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>VEGFA</td><td style="text-align:center;">27</td></tr>
+                    <tr><td>HGF</td><td style="text-align:center;">23</td></tr>
+                    <tr><td>CTNNB1</td><td style="text-align:center;">21</td></tr>
+                    <tr><td>PIK3CA</td><td style="text-align:center;">20</td></tr>
+                    <tr><td>PIK3R1</td><td style="text-align:center;">20</td></tr>
+                    <tr><td>MMP9</td><td style="text-align:center;">18</td></tr>
+                    <tr><td>ALB</td><td style="text-align:center;">16</td></tr>
+                    <tr><td>HSP90AA1</td><td style="text-align:center;">16</td></tr>
+                    <tr><td>GRB2</td><td style="text-align:center;">16</td></tr>
+                    <tr><td>MMP2</td><td style="text-align:center;">16</td></tr>
+                    <tr><td>CBL</td><td style="text-align:center;">15</td></tr>
+                    <tr><td>MET</td><td style="text-align:center;">15</td></tr>
+                    <tr><td>PTPN11</td><td style="text-align:center;">14</td></tr>
+                    <tr><td>CDC42</td><td style="text-align:center;">14</td></tr>
+                    <tr><td>TGFB1</td><td style="text-align:center;">14</td></tr>
+                    <tr><td>IL10</td><td style="text-align:center;">13</td></tr>
+                    <tr><td>TIMP1</td><td style="text-align:center;">13</td></tr>
+                    <tr><td>POMC</td><td style="text-align:center;">12</td></tr>
+                    <tr><td>PIK3CB</td><td style="text-align:center;">12</td></tr>
+                    <tr><td>SOS1</td><td style="text-align:center;">12</td></tr>
+                    <tr><td>KRAS</td><td style="text-align:center;">12</td></tr>
+                    <tr><td>SAA1</td><td style="text-align:center;">11</td></tr>
+                    <tr><td>PLCG1</td><td style="text-align:center;">11</td></tr>
+                    <tr><td>CRK</td><td style="text-align:center;">11</td></tr>
+                    <tr><td>MMP1</td><td style="text-align:center;">11</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>Clustering analysis was performed to identify genes/nodes/proteins that were more densely connected within the PPINs, utilizing seven interaction types. The analysis revealed a significant gene module (module 1), comprising 22 genes, which included TIMP1, SAA1, POMC, TGFB1, MMP1, MMP2, MMP9, IL10, HGF, VEGFA, MET, PLCG1, CRK, PTPN11, CDC42, PIK3CA, PIK3CB, PIK3R1, SOS1, GRB2, CBL, and KRAS (Figure 2B).</p>
+
+        <h2 class="subsection-title">3.4 Potential Drugs Selection and Signal Pathway Analyses</h2>
+    <p class="first-paragraph">We identified 46 drugs or compounds that matched 14 gene targets using the DGIdb database. These drugs interact with the gene targets through various mechanisms, such as binding, agonism, and antibody interactions. In addition, GO and KEGG pathway analyses were performed on the 14 candidate genes, yielding 20 significant KEGG signaling pathway terms. As shown in Figure 3, the Sankey plot illustrates the connections between the drugs, genes, and KEGG pathways. The top enriched KEGG pathways included Pancreatic cancer, Proteoglycans in cancer, Pathways in cancer, and Renal cell carcinoma. Notably, the top three pathways are all associated with cancer, suggesting a potential link between these gene targets and cancer-related mechanisms.</p>
 
         <h1 class="section-title">4 Discussion</h1>
         <p class="no-indent">Inguinal hernia is a prevalent condition, particularly among older adults, with a significant impact on quality of life and healthcare systems. Despite its high incidence, the pathogenesis of inguinal hernia remains poorly understood, and current treatment modalities primarily rely on surgical interventions, which carry risks of recurrence, chronic pain, and mesh-related complications. This study aimed to elucidate the molecular mechanisms underlying inguinal hernia through a comprehensive bioinformatics and text mining approach, identifying potential gene targets and drug interactions that could inform the development of novel therapeutic strategies.</p>
@@ -236,9 +275,9 @@ td { padding: 1mm 2mm; vertical-align: top; }
 
         <p class="no-indent">Pathway enrichment analysis further identified the integrin-linked kinase (ILK) signaling pathway, regulation of CDC42 activity, and the AP-1 transcription factor network as significantly involved in inguinal hernia. The ILK pathway is essential for cell adhesion and cytoskeletal organization [23], while CDC42 is a key regulator of cell morphology and migration [24]. The AP-1 transcription factor network plays a pivotal role in regulating gene expression in response to various stimuli, including stress and cytokines [25]. These pathways collectively suggest that alterations in cell adhesion, cytoskeletal dynamics, and gene regulation are central to hernia pathogenesis.</p>
 
-    <p style="margin-top:4mm;"></p><p>The construction of PPINs revealed a highly interconnected cluster of 22 genes, including key hub genes such as VEGFA, HGF, CTNNB1, PIK3CA, MMP9, and GRB2. These hub genes are involved in essential cellular processes like angiogenesis, cell proliferation, and ECM remodeling. For instance, VEGFA is critical for blood vessel formation [26], which may influence tissue repair and regeneration in the abdominal wall. MMP9, a matrix metalloproteinase [27], plays a direct role in ECM degradation, potentially leading to structural weaknesses.</p>
+    <p>The construction of PPINs revealed a highly interconnected cluster of 22 genes, including key hub genes such as VEGFA, HGF, CTNNB1, PIK3CA, MMP9, and GRB2. These hub genes are involved in essential cellular processes like angiogenesis, cell proliferation, and ECM remodeling. For instance, VEGFA is critical for blood vessel formation [26], which may influence tissue repair and regeneration in the abdominal wall. MMP9, a matrix metalloproteinase [27], plays a direct role in ECM degradation, potentially leading to structural weaknesses.</p>
 
-    <p style="margin-top:5mm;"></p><p>We identified 46 drugs or compounds that interact with 14 key gene targets through the DGIdb database. The identification of existing drugs that target these genes opens avenues for drug repurposing. For example, inhibitors targeting the EGFR pathway [28], commonly used in cancer therapy, might be explored for their potential to modulate similar pathways in inguinal hernia.</p>
+    <p>We identified 46 drugs or compounds that interact with 14 key gene targets through the DGIdb database. The identification of existing drugs that target these genes opens avenues for drug repurposing. For example, inhibitors targeting the EGFR pathway [28], commonly used in cancer therapy, might be explored for their potential to modulate similar pathways in inguinal hernia.</p>
     </div>
     <div class="page-footer">https://medbam.org<span class="page-num">4</span></div>
 </div>
