@@ -633,10 +633,20 @@ question(questions=[{
 - 适用范围：所有 `.fig-caption`、`.table-caption` 元素，以及正文内对图表的编号引用标签
 
 
-- `ORIGINAL ARTICLE` 所在的 `<div>` 必须使用文字下划线（非边框线）：
+- `ORIGINAL ARTICLE` 所在的 `<div>` 必须使用底部边框线样式：
   ```html
-  <div style="...;text-decoration:underline;text-underline-offset:2mm;">ORIGINAL ARTICLE</div>
+  <div style="font-family:Arial,Helvetica,sans-serif;font-size:10pt;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;margin-top:2mm;color:#000;border-bottom:1.5pt solid #000;padding-bottom:1mm;display:inline-block;">ORIGINAL ARTICLE</div>
   ```
+
+- 封面间距规则：`ORIGINAL ARTICLE`(mb:8mm) → 标题(mb:5mm) → 作者(mb:7mm) → front-matter(无mb)
+
+- 封面左栏4区块（按顺序）：Affiliations → Correspondence → Author Contributions → Funding information，左栏 `border-right: 0.5pt solid #000`
+
+- abstract-box padding 统一为 `4mm`（上下左右均为 `padding:4mm 7mm`）
+
+- body `line-height` 统一为 `1.4`
+
+- 页眉日期格式必须标准化为 `Received: YYYY-MM-DD, Revised: YYYY-MM-DD, Accepted: YYYY-MM-DD`，使用英文逗号分隔，DOI 前用 4em 间距
 
 #### 段落缩进规则
 
@@ -656,6 +666,52 @@ question(questions=[{
 <p class="no-indent">子节第一段顶格...</p>
 <p>子节第二段正常缩进...</p>
 ```
+
+#### Back Matter 标准规范（MANDATORY）
+
+**固定顺序9节（含 REFERENCES），全部必须保留标题（即使内容为空）**：
+
+| # | 标题 | 处理规则 |
+|---|------|---------|
+| 1 | ACKNOWLEDGMENTS | 从原文提取；无则写 "The authors have no acknowledgements to declare." |
+| 2 | AUTHOR CONTRIBUTION | 从原文提取；无则留空段落（仍保留标题） |
+| 3 | DATA SHARING STATEMENT | **固定文本，不从原文提取**："The data included in this study are available on the request from the corresponding author or the first author." |
+| 4 | FUNDING | 从原文提取；无则写 "Not applicable." |
+| 5 | CONFLICTS OF INTEREST | **固定文本**："The authors declare that they have no conflicts of interest." |
+| 6 | ETHICS | **固定文本**："Not applicable." |
+| 7 | CONSENT FOR PUBLICATION | **固定文本**："The authors confirm that the work described has not been published before." |
+| 8 | ORCID | 每位作者一行：`姓名: ORCID号` 或 `姓名: Not available` |
+| 9 | REFERENCES | 参考文献列表 |
+
+**标题名称禁止变体（禁止旧名 → 正确名）**：
+
+| 禁止使用 | 正确名称 |
+|-----------|-----------|
+| ACKNOWLEDGEMENTS | ACKNOWLEDGMENTS |
+| CONFLICT OF INTEREST | CONFLICTS OF INTEREST |
+| ETHICS STATEMENTS | ETHICS |
+| AVAILABILITY OF DATA AND MATERIALS | DATA SHARING STATEMENT |
+
+**双栏格式 HTML**（`h1.section-title`）：
+
+```html
+<h1 class="section-title">ACKNOWLEDGMENTS</h1>
+<p class="no-indent">...</p>
+```
+
+**单栏格式 HTML**（inline style h1）：
+
+```html
+<h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">ACKNOWLEDGMENTS</h1>
+<p class="no-indent">...</p>
+```
+
+注：所有 back matter 节标题统一使用 `margin-top:12mm;margin-bottom:6mm`，不区分首节和其余节。
+
+**分页规则（双栏）**：
+- Back matter 8节优先放在同一页（Conclusion 后）
+- 若放不下，允许从任意节标题处开新页
+- 节标题不可出现在页底孤行，必须连同段落一起移至下页
 
 #### 双栏左栏末行对齐规则（MANDATORY）
 

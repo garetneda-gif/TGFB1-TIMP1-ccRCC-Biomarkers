@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ARTICLE_TITLE}} - MedBA Medicine</title>
+    <style>
+        /* ========================================
+           单栏模板样式 - MedBA Medicine期刊标准格式
+           ======================================== */
+        
+        /* ============ URL链接换行处理 ============ */
+        /* 确保长URL在窄栏中能够正确换行 */
+        a {
+            overflow-wrap: anywhere;       /* 允许在任意位置换行 */
+            word-break: break-word;
+        }
+
+        /* ============ 打印/PDF页面设置 ============ */
+        /* 标准A4纸张大小配置 */
+        @page {
+            size: A4;                      /* A4纸张 */
+            margin: 20mm;                  /* 四边统一20mm边距 */
+        }
+
+        /* ============ 打印模式样式 ============ */
+        @media print {
+            /* 页面背景和间距 */
+            body {
+                background: #e8e9ea !important;          /* 保持灰色背景 */
+                margin: 0 !important;
+                padding: 24px 0 !important;
+                -webkit-print-color-adjust: exact !important;  /* 确保打印时保留背景色 */
+                print-color-adjust: exact !important;
+            }
+
+            /* 主页面容器 - 保持网页预览样式 */
+            #page {
+                max-width: 210mm !important;             /* A4宽度 */
+                margin: 0 auto !important;
+                padding: 26mm 20mm !important;
+                background: #fff !important;             /* 白色纸张背景 */
+                box-shadow: 0 14px 50px rgba(0,0,0,0.12) !important;  /* 卡片阴影效果 */
+            }
+
+            /* 页眉页脚位置固定 */
+            #running-header,
+            #running-footer {
+                left: 0 !important;
+                right: 0 !important;
+                padding: 0 20mm !important;
+            }
+
+            /* 页眉顶部距离 */
+            #running-header {
+                top: 8mm !important;
+            }
+
+            /* 页脚底部距离 */
+            #running-footer {
+                bottom: 8mm !important;
+            }
+
+            /* 首页不显示页脚 */
+            #running-footer {
+                display: none !important;
+            }
+
+            /* 正文从新页面开始 */
+            #main-content {
+                break-before: page;                      /* 强制分页 */
+                page-break-before: always;
+            }
+
+            /* 首页封面高度设置 */
+            #cover {
+                position: relative;
+                min-height: 257mm;                       /* A4内容区域 = 297mm - 20mm×2 */
+                padding-bottom: 12mm;
+                box-sizing: border-box;
+            }
+
+            /* 首页页脚居中显示 */
+            #first-page-footer {
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                text-align: center;
+                font-size: 9pt;
+            }
+
+            /* 栏目填充方式 */
+            #main-content {
+                column-fill: auto;
+            }
+
+            /* 避免标题单独成页 */
+            h1,
+            h2 {
+                break-after: avoid;                      /* 标题后不分页 */
+                page-break-after: avoid;
+                break-inside: avoid;                     /* 标题内不分页 */
+                page-break-inside: avoid;
+            }
+
+            /* 保持前置信息和摘要完整 */
+            #front-matter,
+            #abstract-box {
+                break-inside: avoid;                     /* 避免跨页断开 */
+                page-break-inside: avoid;
+            }
+
+            /* 段落孤行控制 */
+            p {
+                orphans: 3;                              /* 页底最少保留3行 */
+                widows: 3;                               /* 页顶最少保留3行 */
+            }
+        }
+    </style>
+
+</head>
+<body style="margin:0;background:#e8e9ea;font-family:'Times New Roman',Times,serif;font-size:10pt;line-height:1.4;color:#000;">
+<!-- ========================================
+     主页面容器
+     ======================================== -->
+<div id="page" style="max-width:210mm;margin:24px auto;padding:26mm 20mm;background:#fff;box-shadow:0 14px 50px rgba(0,0,0,0.12);">
+<div id="cover">
+<!-- ============ 首页页眉第一行：日期+DOI 左 / MedBA Medicine 右 / 底部细线 ============ -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;font-size:7pt;border-bottom:0.5pt solid #000;padding-bottom:1mm;margin-bottom:2mm;">
+        <div style="flex:1;">
+            {{RECEIVED_DATE}}
+            <span style="margin-left:2em;">DOI: {{DOI}}</span>
+        </div>
+        <div style="font-weight:bold;">MedBA Medicine</div>
+    </div>
+    <!-- ============ 第二行：文章类型 左 / Logo 右 ============ -->
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm;">
+        <div style="font-family:Arial,Helvetica,sans-serif;font-size:10pt;font-weight:bold;letter-spacing:0.06em;text-transform:uppercase;margin-top:2mm;color:#000;border-bottom:1.5pt solid #000;padding-bottom:1mm;display:inline-block;">ORIGINAL ARTICLE</div>
+        <img src="https://medbam.org/assets/logo.png" alt="MedBA Logo" style="height:38px;width:auto;display:block;">
+    </div>
+
+    <!-- ============ 标题和作者 ============ -->
+    <!-- 文章标题占位符 -->
+    <div id="article-title" style="font-size:18pt;font-weight:bold;margin-bottom:8mm;line-height:1.2;text-align:left;">
+        {{ARTICLE_TITLE}}
+    </div>
+
+    <!-- 作者列表占位符（带上标编号，示例：Author One<sup>1</sup>, Author Two<sup>2</sup>） -->
+    <div id="article-authors" style="font-size:11pt;margin-bottom:10mm;font-weight:normal;text-align:left;">
+        {{AUTHOR_LIST}}
+    </div>
+
+    <!-- ============ 前置信息区域（单栏布局） ============ -->
+    <div id="front-matter" style="display:block;margin-bottom:8mm;">
+        <!-- 机构信息、通讯作者、贡献声明、基金资助（全宽） -->
+        <div style="width:100%;font-size:8pt;line-height:1.3;padding-right:0;margin-bottom:6mm;">
+            <!-- 作者单位 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                {{AFFILIATIONS}}
+            </p>
+            
+            <!-- 通讯作者信息 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                <span style="font-weight:bold;display:block;margin-bottom:1mm;">Correspondence</span>
+                {{CORRESPONDENCE}}
+            </p>
+
+            <!-- 作者贡献 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                <span style="font-weight:bold;display:block;margin-bottom:1mm;">Author Contributions</span>
+                {{AUTHOR_CONTRIBUTIONS}}
+            </p>
+
+            <!-- 基金资助信息 -->
+            <p style="margin:0 0 3mm 0;text-indent:0;text-align:left;">
+                <span style="font-weight:bold;display:block;margin-bottom:1mm;">Funding information</span>
+                {{FUNDING_INFO}}
+            </p>
+        </div>
+
+        <!-- ============ 摘要盒子 ============ -->
+        <div id="abstract-box" style="width:100%;border:1pt solid #b8b8b8;border-left:3pt solid #005a8c;padding:4mm 7mm;position:relative;box-sizing:border-box;overflow-wrap:break-word;word-wrap:break-word;box-shadow:0 0 15px rgba(0,0,0,0.15);background-color:#f8f9fa;">
+            <!-- 左上角装饰 -->
+            <div style="position:absolute;top:2mm;left:2mm;width:6mm;height:6mm;border-top:1pt solid #005a8c;border-left:1pt solid #005a8c;"></div>
+
+            <!-- 摘要标题 -->
+            <div style="font-size:10pt;font-weight:bold;font-variant:small-caps;letter-spacing:0.05em;margin-bottom:3mm;color:#005a8c;">Abstract</div>
+            
+            <!-- 摘要正文（按段落分节） -->
+            <div style="font-size:9pt;line-height:1.3;">
+                {{ABSTRACT_CONTENT}}
+                
+                <!-- 关键词 -->
+                <div style="margin-top:2mm;">
+                    <span style="font-weight:bold;">Keywords:</span> {{KEYWORDS}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 首页页脚占位 -->
+    <div id="first-page-footer"></div>
+</div>
+
+
+
+<!-- ============ 运行页脚（从第二页开始） ============ -->
+<div id="running-footer" style="position:fixed;bottom:12mm;left:0;right:0;padding:0 20mm;font-family:'Times New Roman',Times,serif;font-size:9pt;color:#000;display:flex;justify-content:space-between;pointer-events:none;z-index:10;"></div>
+
+    <!-- ============ 正文内容区域 ============ -->
+    <div id="main-content" style="text-align:justify;">
+
+        <!-- ====================================================================
+             正文章节示范 - 包含标题、段落、图片、表格、公式等常见元素
+             ==================================================================== -->
+
+        <!-- ============ 1 引言 ============ -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:0;margin-bottom:6mm;border-top:0;padding-top:0;">1 INTRODUCTION</h1>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{INTRO_PARA_1}}</p>
+        <p style="margin:0 0 2mm 0;text-indent:1em;text-align:justify;">{{INTRO_PARA_2}}</p>
+        <p style="margin:0 0 2mm 0;text-indent:1em;text-align:justify;">{{INTRO_PARA_3}}</p>
+
+        <!-- ============ 2 材料与方法 ============ -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">2 MATERIALS AND METHODS</h1>
+        <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;font-weight:bold;text-align:left;margin-top:5mm;margin-bottom:2.5mm;">2.1 Data Source</h2>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{METHODS_2_1}}</p>
+
+        <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;font-weight:bold;text-align:left;margin-top:5mm;margin-bottom:2.5mm;">2.2 Statistical Analysis</h2>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{METHODS_2_2}}</p>
+
+        <!-- ============ 公式示例 ============ -->
+        <!--
+            公式排版规范：
+            - 居中显示，字号 10pt
+            - 使用 <sub> <sup> 实现上下标
+            - 特殊符号用 HTML 实体（&plusmn; &radic; &chi; &ge; &le;）
+            - 判定标准另起一段，不缩进
+        -->
+        <p style="margin:1mm 0;text-indent:0;text-align:center;font-size:10pt;">ROR = ad / bc</p>
+        <p style="margin:1mm 0;text-indent:0;text-align:center;font-size:9pt;">95% CI = e<sup>ln(ROR) &plusmn; 1.96&radic;(1/a + 1/b + 1/c + 1/d)</sup></p>
+        <p style="margin:0 0 2mm 0;text-indent:0;">The criteria of positive signals: the lower limit of 95% CI &gt; 1, N &ge; 3;</p>
+
+        <!-- ============ 表格示例：简单二维表 ============ -->
+        <!-- 
+            表格样式规范：
+            - 外框：上下1.5pt实线
+            - 表头下方：0.5pt实线
+            - 表体内部：无竖线，无横线
+            - 字号：8.5pt（标准）或 7.5pt（紧凑型大表）
+            - 标题颜色：#005a8c
+            - 表注字号：7.5pt
+        -->
+        <div style="margin:5mm 0 6mm;break-inside:avoid;page-break-inside:avoid;width:100%;" id="tbl-1">
+            <div style="font-size:8.5pt;margin-bottom:2mm;text-align:left;font-weight:normal;color:#222;"><span style="font-weight:bold;color:#005a8c;">Table 1.</span> {{TABLE_1_CAPTION}}</div>
+            <table style="width:100%;border-collapse:collapse;font-family:'Times New Roman',Times,serif;font-size:8.5pt;line-height:1.3;font-variant-numeric:tabular-nums lining-nums;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">
+                <thead>
+                    <tr>
+                        <th style="border-top:1.5pt solid #000;border-bottom:0.5pt solid #000;font-weight:bold;text-align:left;padding:1.5mm 2mm;vertical-align:bottom;">Characteristic</th>
+                        <th style="border-top:1.5pt solid #000;border-bottom:0.5pt solid #000;font-weight:bold;text-align:center;padding:1.5mm 2mm;vertical-align:bottom;">Counts</th>
+                        <th style="border-top:1.5pt solid #000;border-bottom:0.5pt solid #000;font-weight:bold;text-align:center;padding:1.5mm 2mm;vertical-align:bottom;">Percentage (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="3" style="font-weight:bold;padding:1mm 2mm;padding-top:1.5mm;">Gender</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">Male</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">150 (51%)</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">51.0</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">Female</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">144 (49%)</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">49.0</td></tr>
+                    <tr><td colspan="3" style="font-weight:bold;padding:1mm 2mm;padding-top:1.5mm;">Age</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">&lt;65</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">258 (88%)</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">87.8</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">&gt;=65</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">36 (12%)</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">12.2</td></tr>
+                    <tr><td colspan="3" style="font-weight:bold;padding:1mm 2mm;padding-top:1.5mm;">Vital status</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">Living</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">223 (76%)</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">75.9</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">Dead</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">71 (24%)</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">24.1</td></tr>
+                </tbody>
+            </table>
+            <div style="font-size:7.5pt;margin-top:1.5mm;line-height:1.25;">{{TABLE_1_FOOTNOTE}}</div>
+        </div>
+
+        <!-- ============ 3 结果 ============ -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">3 RESULTS</h1>
+        <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;font-weight:bold;text-align:left;margin-top:5mm;margin-bottom:2.5mm;">3.1 Descriptive Results</h2>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">The flowchart for this manuscript study is shown in <a href="#fig-1" style="color:#005a8c;text-decoration:none;border-bottom:1px solid transparent;">Figure 1</a>. The distribution of samples is displayed in <a href="#fig-2" style="color:#005a8c;text-decoration:none;border-bottom:1px solid transparent;">Figure 2</a>. Patient clinical information is presented in <a href="#tbl-1" style="color:#005a8c;text-decoration:none;border-bottom:1px solid transparent;">Table 1</a>. {{RESULTS_3_1}}</p>
+
+        <!-- ============ 并列图片示例（两图并排） ============ -->
+        <!--
+            并列图片规范：
+            - 使用 display:flex 布局
+            - flex 值控制宽度比例（如 1.2 vs 0.8）
+            - gap:5mm 图间距
+            - break-inside:avoid 防止跨页断开
+            - figcaption 字号 8.5pt，标签加粗 #005a8c
+        -->
+        <div style="display:flex;gap:5mm;margin:5mm 0;align-items:flex-end;break-inside:avoid;page-break-inside:avoid;">
+            <figure id="fig-1" style="flex:1.2;margin:0;display:flex;flex-direction:column;">
+                <img src="https://medbam.org/assets/Ferroptosis-Cervical-Cancer/Figure 1.png" alt="Figure 1" style="width:100%;height:auto;display:block;">
+                <figcaption style="font-size:8.5pt;margin-top:2mm;text-align:left;line-height:1.3;color:#222;"><span style="font-weight:bold;color:#005a8c;">Figure 1.</span> {{FIGURE_1_CAPTION}}</figcaption>
+            </figure>
+            <figure id="fig-2" style="flex:0.8;margin:0;display:flex;flex-direction:column;">
+                <img src="https://medbam.org/assets/Ferroptosis-Cervical-Cancer/Figure 2.png" alt="Figure 2" style="width:100%;height:auto;display:block;">
+                <figcaption style="font-size:8.5pt;margin-top:2mm;text-align:left;line-height:1.3;color:#222;"><span style="font-weight:bold;color:#005a8c;">Figure 2.</span> {{FIGURE_2_CAPTION}}</figcaption>
+            </figure>
+        </div>
+
+        <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;font-weight:bold;text-align:left;margin-top:5mm;margin-bottom:2.5mm;">3.2 Model Construction</h2>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{RESULTS_3_2}}</p>
+
+        <!-- ============ 全宽图片示例（单图占满宽度） ============ -->
+        <!--
+            全宽图片规范：
+            - column-span:all 确保跨栏显示
+            - width:100% 占满容器宽度
+            - break-inside:avoid 防止跨页断开
+            - 适合大型复合图、多子图面板
+        -->
+        <figure id="fig-3" style="margin:5mm 0;width:100%;break-inside:avoid;page-break-inside:avoid;column-span:all;">
+            <img src="https://medbam.org/assets/Ferroptosis-Cervical-Cancer/Figure 3.png" alt="Figure 3" style="width:100%;height:auto;display:block;">
+            <figcaption style="font-size:8.5pt;margin-top:2mm;text-align:left;line-height:1.3;color:#222;"><span style="font-weight:bold;color:#005a8c;">Figure 3.</span> {{FIGURE_3_CAPTION}}</figcaption>
+        </figure>
+
+        <h2 style="font-family:Arial,Helvetica,sans-serif;font-size:9.5pt;font-weight:bold;text-align:left;margin-top:5mm;margin-bottom:2.5mm;">3.3 Enrichment Analysis</h2>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{RESULTS_3_3}}</p>
+
+        <!-- ============ 全宽图片示例2 ============ -->
+        <figure id="fig-4" style="margin:5mm 0;width:100%;break-inside:avoid;page-break-inside:avoid;column-span:all;">
+            <img src="https://medbam.org/assets/Ferroptosis-Cervical-Cancer/Figure 4.png" alt="Figure 4" style="width:100%;height:auto;display:block;">
+            <figcaption style="font-size:8.5pt;margin-top:2mm;text-align:left;line-height:1.3;color:#222;"><span style="font-weight:bold;color:#005a8c;">Figure 4.</span> {{FIGURE_4_CAPTION}}</figcaption>
+        </figure>
+
+        <!-- ============ 多列数据表示例（紧凑型大表） ============ -->
+        <!--
+            紧凑型大表规范：
+            - 字号 7.5pt（比标准表格更小）
+            - 适合列数多、数据密集的统计表
+            - 表头可使用 <sup> 标注上标
+        -->
+        <div style="margin:5mm 0 6mm;break-inside:avoid;page-break-inside:avoid;width:100%;column-span:all;" id="tbl-2">
+            <div style="font-size:8.5pt;margin-bottom:2mm;text-align:left;font-weight:normal;color:#222;"><span style="font-weight:bold;color:#005a8c;">Table 2.</span> {{TABLE_2_CAPTION}}</div>
+            <table style="width:100%;border-collapse:collapse;font-family:'Times New Roman',Times,serif;font-size:7.5pt;line-height:1.3;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">
+                <thead><tr><th style="border-bottom:0.5pt solid #000;font-weight:bold;text-align:left;padding:1.5mm 2mm;">Category</th><th style="border-bottom:0.5pt solid #000;font-weight:bold;text-align:left;padding:1.5mm 2mm;">Term</th><th style="border-bottom:0.5pt solid #000;font-weight:bold;text-align:center;padding:1.5mm 2mm;">Count</th><th style="border-bottom:0.5pt solid #000;font-weight:bold;text-align:center;padding:1.5mm 2mm;">P Value</th></tr></thead>
+                <tbody>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">GOTERM_BP_DIRECT</td><td style="padding:1mm 2mm;border:none;vertical-align:top;">GO:0044804~nucleophagy</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">3</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">1.78E-05</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">GOTERM_BP_DIRECT</td><td style="padding:1mm 2mm;border:none;vertical-align:top;">GO:0000422~mitophagy</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">3</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">8.81E-05</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">GOTERM_BP_DIRECT</td><td style="padding:1mm 2mm;border:none;vertical-align:top;">GO:0006915~apoptotic process</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">3</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">0.021</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">KEGG_PATHWAY</td><td style="padding:1mm 2mm;border:none;vertical-align:top;">hsa04066:HIF-1 signaling pathway</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">3</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">0.003</td></tr>
+                    <tr><td style="padding:1mm 2mm;border:none;vertical-align:top;">KEGG_PATHWAY</td><td style="padding:1mm 2mm;border:none;vertical-align:top;">hsa04140:Regulation of autophagy</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">2</td><td style="padding:1mm 2mm;border:none;vertical-align:top;text-align:center;">0.022</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ============ 信号强度大表示例（多列统计数据） ============ -->
+        <!--
+            多指标统计表规范：
+            - 适用于药物警戒、信号检测等数据密集场景
+            - 上标 <sup>#</sup> 标注药品说明书中已有的不良反应
+            - CI区间用括号表示
+        -->
+        <div style="margin:5mm 0 6mm;break-inside:avoid;width:100%;column-span:all;" id="tbl-3">
+            <div style="font-size:8.5pt;margin-bottom:2mm;text-align:left;color:#222;"><span style="font-weight:bold;color:#005a8c;">Table 3.</span> {{TABLE_3_CAPTION}}</div>
+            <table style="width:100%;border-collapse:collapse;font-size:7.5pt;line-height:1.3;border-top:1.5pt solid #000;border-bottom:1.5pt solid #000;">
+                <thead><tr><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;">AEs</th><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;">SOC</th><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;text-align:center;">Cases</th><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;text-align:center;">ROR (95% CI)</th><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;text-align:center;">PRR (95% CI)</th><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;text-align:center;">IC (IC<sub>025</sub>)</th><th style="border-bottom:0.5pt solid #000;padding:1.5mm 2mm;text-align:center;">EBGM (EBGM<sub>05</sub>)</th></tr></thead>
+                <tbody>
+                    <tr><td style="padding:1mm 2mm;">Death<sup>#</sup></td><td style="padding:1mm 2mm;font-size:7.5pt;">General disorders</td><td style="padding:1mm 2mm;text-align:center;">11,753</td><td style="padding:1mm 2mm;text-align:center;">15.99 (15.61-16.39)</td><td style="padding:1mm 2mm;text-align:center;">9.46 (9.33-9.59)</td><td style="padding:1mm 2mm;text-align:center;">3.21 (3.13)</td><td style="padding:1mm 2mm;text-align:center;">9.23 (9.01)</td></tr>
+                    <tr><td style="padding:1mm 2mm;">Rash<sup>#</sup></td><td style="padding:1mm 2mm;font-size:7.5pt;">Skin disorders</td><td style="padding:1mm 2mm;text-align:center;">4,061</td><td style="padding:1mm 2mm;text-align:center;">10.38 (10.04-10.74)</td><td style="padding:1mm 2mm;text-align:center;">8.97 (8.72-9.23)</td><td style="padding:1mm 2mm;text-align:center;">3.13 (3.02)</td><td style="padding:1mm 2mm;text-align:center;">8.77 (8.48)</td></tr>
+                    <tr><td style="padding:1mm 2mm;">Diarrhoea<sup>#</sup></td><td style="padding:1mm 2mm;font-size:7.5pt;">Gastrointestinal disorders</td><td style="padding:1mm 2mm;text-align:center;">2,732</td><td style="padding:1mm 2mm;text-align:center;">4.47 (4.30-4.65)</td><td style="padding:1mm 2mm;text-align:center;">4.12 (3.97-4.27)</td><td style="padding:1mm 2mm;text-align:center;">2.03 (1.90)</td><td style="padding:1mm 2mm;text-align:center;">4.08 (3.92)</td></tr>
+                </tbody>
+            </table>
+            <div style="font-size:7.5pt;margin-top:1.5mm;line-height:1.25;">Terms marked with <sup>#</sup> indicate AEs documented in the drug label.</div>
+        </div>
+
+        <!-- ============ 4 讨论 ============ -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">4 DISCUSSION</h1>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{DISCUSSION_PARA_1}}</p>
+        <p style="margin:0 0 2mm 0;text-indent:1em;text-align:justify;">{{DISCUSSION_PARA_2}}</p>
+        <p style="margin:0 0 2mm 0;text-indent:1em;text-align:justify;">{{DISCUSSION_PARA_3}}</p>
+
+        <!-- ============ 5 结论 ============ -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">5 CONCLUSIONS</h1>
+        <p style="margin:0 0 2mm 0;text-indent:0;text-align:justify;">{{CONCLUSIONS}}</p>
+
+        <!-- ====================================================================
+             末尾信息区域 - Back Matter（固定8节，全部必须保留标题）
+             ==================================================================== -->
+
+        <!-- 1. 致谢 -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">ACKNOWLEDGMENTS</h1>
+        <p class="no-indent">{{ACKNOWLEDGMENTS}}</p>
+
+        <!-- 2. 作者贡献（无内容时留空段落，保留标题） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">AUTHOR CONTRIBUTION</h1>
+        <p class="no-indent">{{AUTHOR_CONTRIBUTION}}</p>
+
+        <!-- 3. 数据共享声明（固定文本，不从原文提取） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">DATA SHARING STATEMENT</h1>
+        <p class="no-indent">The data included in this study are available on the request from the corresponding author or the first author.</p>
+
+        <!-- 4. 资助（从原文提取；无则写 Not applicable.） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">FUNDING</h1>
+        <p class="no-indent">{{FUNDING}}</p>
+
+        <!-- 5. 利益冲突声明（固定文本） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">CONFLICTS OF INTEREST</h1>
+        <p class="no-indent">The authors declare that they have no conflicts of interest.</p>
+
+        <!-- 6. 伦理声明（固定文本） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">ETHICS</h1>
+        <p class="no-indent">Not applicable.</p>
+
+        <!-- 7. 发表同意声明（固定文本） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">CONSENT FOR PUBLICATION</h1>
+        <p class="no-indent">The authors confirm that the work described has not been published before.</p>
+
+        <!-- 8. ORCID（每位作者一行，无 ORCID 时写 Not available） -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">ORCID</h1>
+        <p class="no-indent">{{ORCID_LIST}}</p>
+        <!-- ORCID 格式示例：
+             张三: 0000-0001-2345-6789
+             李四: Not available
+        -->
+
+        <!-- ============ 参考文献标题 ============ -->
+        <!--
+            参考文献格式规范：
+            - 编号使用方括号，如 [1] [2] [3]
+            - 整体字号 8pt，行高 1.3
+            - 每条文献用 padding-left + text-indent 实现悬挂缩进
+            - DOI 链接颜色 #005a8c
+            - 元数据链接（PubMed | Google Scholar | Crossref）放在文献后换行
+            - 无 DOI 的文献只提供可用的链接
+            - 三种链接组合：
+              (1) 有DOI+PubMed: PubMed | Google Scholar | Crossref
+              (2) 有PubMed无DOI: PubMed | Google Scholar
+              (3) 有DOI无PubMed: Google Scholar | Crossref
+        -->
+        <h1 style="column-span:all;font-family:Arial,Helvetica,sans-serif;font-size:11pt;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;text-align:left;margin-top:12mm;margin-bottom:6mm;border-top:0;padding-top:0;">REFERENCES</h1>
+        <!-- ============ 参考文献列表 ============ -->
+        <div style="font-size:8pt;line-height:1.3;">
+            <!-- 标准文献条目（有 DOI + PubMed） -->
+            <div style="margin-bottom:2mm;padding-left:1.5em;text-indent:-1.5em;font-size:8pt;line-height:1.3;">[1] Author A, Author B, Author C, et al. Title of the article[J]. Journal Name, 2020,127(12):2893-917 DOI: <a href="https://doi.org/10.1000/example" target="_blank" style="color:#005a8c;text-decoration:none;">10.1000/example</a>.<br><a href="https://pubmed.ncbi.nlm.nih.gov/00000000/" target="_blank" style="color:#005a8c;text-decoration:none;">PubMed</a> | <a href="https://scholar.google.com/scholar?q=Title+of+the+article" target="_blank" style="color:#005a8c;text-decoration:none;">Google Scholar</a> | <a href="https://doi.org/10.1000/example" target="_blank" style="color:#005a8c;text-decoration:none;">Crossref</a></div>
+            <!-- 无 DOI 的文献条目（仅 PubMed + Google Scholar） -->
+            <div style="margin-bottom:2mm;padding-left:1.5em;text-indent:-1.5em;font-size:8pt;line-height:1.3;">[2] Author D, Author E. Another article title[J]. Am J Transl Res, 2021,13(10):11585-96.<br><a href="https://pubmed.ncbi.nlm.nih.gov/00000001/" target="_blank" style="color:#005a8c;text-decoration:none;">PubMed</a> | <a href="https://scholar.google.com/scholar?q=Another+article+title" target="_blank" style="color:#005a8c;text-decoration:none;">Google Scholar</a></div>
+            <!-- 无 PubMed 的文献条目（仅 Google Scholar + Crossref） -->
+            <div style="margin-bottom:2mm;padding-left:1.5em;text-indent:-1.5em;font-size:8pt;line-height:1.3;">[3] Author F, Author G. Third article example[J]. Inorganic Chemistry Communications, 2024, 161: 112114. DOI: <a href="https://doi.org/10.1000/example3" target="_blank" style="color:#005a8c;text-decoration:none;">10.1000/example3</a>.<br><a href="https://scholar.google.com/scholar?q=Third+article+example" target="_blank" style="color:#005a8c;text-decoration:none;">Google Scholar</a> | <a href="https://doi.org/10.1000/example3" target="_blank" style="color:#005a8c;text-decoration:none;">Crossref</a></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
