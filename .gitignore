@@ -4,3 +4,18 @@ __pycache__/
 .playwright-mcp/
 logs/
 screenshots/
+
+# Skill 文件属于 journal-typesetting.skill 仓库，不要跟踪
+SKILL.md
+assets/
+references/
+scripts/
+image/
+
+# 编辑器和工具配置
+.claude/
+.sisyphus/
+.vscode/
+
+# 原始稿件
+*.docx
